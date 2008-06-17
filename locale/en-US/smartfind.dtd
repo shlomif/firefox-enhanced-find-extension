@@ -1,0 +1,5 @@
+<!ENTITY smartfind.label "Your localized menuitem">
+<!ENTITY smartfindContext.label "Your Menuitem">
+<!ENTITY smartfindContext.accesskey "Y">
+<!ENTITY smartfindToolbar.label "Your Toolbar Button">
+<!ENTITY smartfindToolbar.tooltip "This is your toolbar button!">
