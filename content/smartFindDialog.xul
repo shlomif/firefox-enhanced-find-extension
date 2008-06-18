@@ -15,7 +15,7 @@
   - The Original Code is Smart Find.
   -
   - The Initial Developer of the Original Code is
-  - Roberto Oliveira dos Santos.
+  - Tomaz Nolêto <tnoleto@gmail.com>.
   - Portions created by the Initial Developer are Copyright (C) 2008
   - the Initial Developer. All Rights Reserved.
   -
@@ -35,16 +35,16 @@
   -
   - ***** END LICENSE BLOCK ***** -->
 
-<?xml-stylesheet href="chrome://smartfind/skin/overlay.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://smartfind/locale/smartfind.dtd">
-<overlay id="smartfind-overlay"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script src="overlay.js"/>
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="smartfind-strings" src="chrome://smartfind/locale/smartfind.properties"/>
-  </stringbundleset>
-
-  <keyset>
-    <key id="smartFind_Dialog" modifiers="shift" key="f" oncommand="smartFindOverlay.openDialog()"/>
-  </keyset>
-</overlay>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE prefwindow SYSTEM "chrome://smartfind/locale/prefwindow.dtd">
+<dialog id="smartFindDialog"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        title="Smart Find"
+        buttons="extra1,extra2,cancel"
+        buttonlabelextra1="Next"
+        buttonlabelextra2="Previous"
+        ondialogextra1="findNext()"
+        ondialogextra2="findPrevious()">
+  <script src="smartFind.js"/>
+  <textbox id="smartfind_FindString"/>
+</dialog>

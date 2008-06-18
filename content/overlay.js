@@ -5,7 +5,7 @@
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  * http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  * for the specific language governing rights and limitations under the
@@ -31,10 +31,11 @@
  * and other provisions required by the GPL or the LGPL. If you do not delete
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
- * 
+ *
  * ***** END LICENSE BLOCK ***** */
 
-var smartfind = {
+var smartFindOverlay =
+{
   onLoad: function() {
     // initialization code
     this.initialized = true;
@@ -43,21 +44,17 @@ var smartfind = {
             .addEventListener("popupshowing", function(e) { this.showContextMenu(e); }, false);
   },
 
-  showContextMenu: function(event) {
-    // show or hide the menuitem based on what the context menu is on
-    // see http://kb.mozillazine.org/Adding_items_to_menus
-    document.getElementById("context-smartfind").hidden = gContextMenu.onImage;
-  },
   onMenuItemCommand: function(e) {
     var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                   .getService(Components.interfaces.nsIPromptService);
     promptService.alert(window, this.strings.getString("helloMessageTitle"),
                                 this.strings.getString("helloMessage"));
   },
-  onToolbarButtonCommand: function(e) {
-    // just reuse the function above.  you can change this, obviously!
-    smartfind.onMenuItemCommand(e);
-  }
 
+  openDialog: function() {
+    window.openDialog("chrome://smartfind/content/smartFindDialog.xul",
+                      "showmore", "chrome", "yeah");
+  }
 };
-window.addEventListener("load", function(e) { smartfind.onLoad(e); }, false);
+
+window.addEventListener("load", function(e) { smartFindOverlay.onLoad(e); }, false);
