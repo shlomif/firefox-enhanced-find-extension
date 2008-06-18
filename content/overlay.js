@@ -14,7 +14,7 @@
  * The Original Code is Smart Find.
  *
  * The Initial Developer of the Original Code is
- * Roberto Oliveira dos Santos.
+ * Tomaz Nolêto <tnoleto@gmail.com>.
  * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  *
@@ -36,25 +36,16 @@
 
 var smartFindOverlay =
 {
-  onLoad: function() {
-    // initialization code
-    this.initialized = true;
-    this.strings = document.getElementById("smartfind-strings");
-    document.getElementById("contentAreaContextMenu")
-            .addEventListener("popupshowing", function(e) { this.showContextMenu(e); }, false);
-  },
+    onLoad: function() {
+        this.initialized = true;
+        this.strings = document.getElementById("smartfind-strings");
+    },
 
-  onMenuItemCommand: function(e) {
-    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                                  .getService(Components.interfaces.nsIPromptService);
-    promptService.alert(window, this.strings.getString("helloMessageTitle"),
-                                this.strings.getString("helloMessage"));
-  },
-
-  openDialog: function() {
-    window.openDialog("chrome://smartfind/content/smartFindDialog.xul",
-                      "showmore", "chrome", "yeah");
-  }
+    openDialog: function() {
+        window.openDialog("chrome://smartfind/content/smartFindDialog.xul",
+                          "chrome,modal", "",
+                          gBrowser);
+    }
 };
 
 window.addEventListener("load", function(e) { smartFindOverlay.onLoad(e); }, false);

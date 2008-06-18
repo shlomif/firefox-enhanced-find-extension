@@ -46,6 +46,9 @@
   <separator class="thin"/>
   <text value="&createdBy;" style="font-weight: bold;"/>
   <text value="Roberto Oliveira dos Santos"/>
+  <text value="Tomaz Nolêto Silva Júnior"/>
+  <text value="Antônio Gomes de Araújo Netto"/>
+  <text value="André de Souza Pedralho"/>
   <separator class="thin"/>
       <text value="&homepage;" style="font-weight: bold;"/>
     <text value="http://code.google.com/p/smartfind/"

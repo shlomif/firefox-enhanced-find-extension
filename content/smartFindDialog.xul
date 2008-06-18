@@ -38,6 +38,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE prefwindow SYSTEM "chrome://smartfind/locale/prefwindow.dtd">
 <dialog id="smartFindDialog"
+        onload="smartFind.init()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         title="Smart Find"
         buttons="extra1,extra2,cancel"
@@ -45,8 +46,13 @@
         buttonlabelextra2="Previous"
         buttoniconextra1="go-forward"
         buttoniconextra2="go-back"
-        ondialogextra1="findNext()"
-        ondialogextra2="findPrevious()">
-  <script src="smartFind.js"/>
-  <textbox id="smartfind_FindString"/>
+        ondialogextra1="smartFind.findNext()"
+        ondialogextra2="smartFind.findPrevious()">
+    <script src="smartFind.js"/>
+    <textbox id="smartFind_FindString"/>
+    <hbox align="center">
+        <spacer flex="1"/>
+        <label value="Similarity (0-10): " control="smartFind_similarity"/>
+        <textbox id="smartFind_similarity" type="number" size="2" min="0" max="10" increment="1" value="8"/>
+    </hbox>
 </dialog>

@@ -15,7 +15,7 @@
   - The Original Code is Smart Find.
   -
   - The Initial Developer of the Original Code is
-  - Roberto Oliveira dos Santos.
+  - Tomaz Nolêto <tnoleto@gmail.com>.
   - Portions created by the Initial Developer are Copyright (C) 2008
   - the Initial Developer. All Rights Reserved.
   -
@@ -39,12 +39,15 @@
 <!DOCTYPE overlay SYSTEM "chrome://smartfind/locale/smartfind.dtd">
 <overlay id="smartfind-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script src="overlay.js"/>
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="smartfind-strings" src="chrome://smartfind/locale/smartfind.properties"/>
-  </stringbundleset>
 
-  <keyset>
-    <key id="smartFind_Dialog" modifiers="shift" key="f" oncommand="smartFindOverlay.openDialog()"/>
-  </keyset>
+    <script src="overlay.js"/>
+
+    <stringbundleset id="stringbundleset">
+        <stringbundle id="smartfind-strings" src="chrome://smartfind/locale/smartfind.properties"/>
+    </stringbundleset>
+
+    <keyset>
+        <key id="smartFind_Dialog" modifiers="shift" key="F" oncommand="smartFindOverlay.openDialog()"/>
+    </keyset>
+
 </overlay>
