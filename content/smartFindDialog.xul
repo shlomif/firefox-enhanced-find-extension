@@ -43,6 +43,8 @@
         buttons="extra1,extra2,cancel"
         buttonlabelextra1="Next"
         buttonlabelextra2="Previous"
+        buttoniconextra1="go-forward"
+        buttoniconextra2="go-back"
         ondialogextra1="findNext()"
         ondialogextra2="findPrevious()">
   <script src="smartFind.js"/>
