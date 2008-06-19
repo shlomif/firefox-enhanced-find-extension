@@ -52,7 +52,7 @@
     <textbox id="smartFind_FindString"/>
     <hbox align="center">
         <spacer flex="1"/>
-        <label value="Similarity (0-10): " control="smartFind_similarity"/>
-        <textbox id="smartFind_similarity" type="number" size="2" min="0" max="10" increment="1" value="8"/>
+        <label value="Similarity (0-100): " control="smartFind_similarity"/>
+        <textbox id="smartFind_similarity" type="number" size="3" min="0" max="100" increment="5" value="80"/>
     </hbox>
 </dialog>
