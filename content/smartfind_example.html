@@ -1,0 +1,101 @@
+<html>
+<head>
+<title> Find More </title>
+</head>		
+<script language="Javascript" src="findmore.js"></script>
+<body>
+<script language="Javascript">
+	
+	var texto = "	filipe de sá mesquita <br/> antonio gomes de araujo netto <br/> roberto oliveira dos santos <br/>";
+	texto += "Introdução Os gregos criaram vários mitos para poder passar mensagens ";
+	texto += "para as pessoas e também com o objetivo de preservar a memória histórica ";
+	texto += " de seu povo. Há três mil anos, não havia explicações científicas para grande";
+	texto += " parte dos fenômenos da (natureza) ou para os acontecimentos históricos. ";
+	texto += "Portanto, para buscar um significado para pesoas, também o objetvo os fatos políticos, econômicos e sociais, ";
+	texto += "os gregos criaran uma série de histórias, de origem imaginativa, que eram transmitidas,";
+	texto += "	principalmente, através da literatura oral.";
+	
+	
+	
+	// ACRESCENTAR O MÉTODO PARA EXTRAIR O TEXTO DO <BODY>
+	document.writeln(texto);
+	
+	
+	// split no texto
+	var palavras = fazerSplit(texto);
+	
+	
+	// colocar um promp aqui
+	var procura = prompt("Procurar por?");
+	//var procura = "antônio neto";
+	// split nos termos da busca
+	var s1 = fazerSplit(procura);
+	
+	
+	escrever("<br/><br/>Buscar por : \"");
+	escrevervetor(s1);
+	escrever("\"<br/>");
+
+
+	
+	var LIMIAR = 0.5; // pode ser ajustado de acordo com a especificacao do usuario.
+	var rankingtermos = new Array();
+	var rt = 0;
+	for(var t = 0; t < s1.length; t++){
+		escrever(" ITERACAO " + t + "<br/>===================<br/>");
+		var termosmarcados = listatermosprovaveis (LIMIAR, s1[t], palavras);
+		rankingtermos[rt++] = termosmarcados;
+		escrever("termo :: ");escrevervetor(termosmarcados);
+		escrever("<br/><br/>");
+	}
+	
+	escrever("<br/>");escrever("<br/>");
+	
+	// primeira parte: MARCAR APENAS AS PALAVRAS SOLTAS. neste exemplo foi usado o termo mais provavel
+	var tam = rankingtermos.length;
+	var expres = new Array();
+	for(var t = 0; t < rankingtermos.length; t++){
+		var tmp = rankingtermos[t];
+		expres[t] = tmp[0];
+	}
+	
+	var s = marcartermosindependentes(expres, palavras);
+	
+	
+	
+	/*
+	var tam = rankingtermos.length;
+	var expres = "";
+	for(var t = 0; t < rankingtermos.length; t++){
+		var tmp = rankingtermos[t];
+		expres += tmp[0];
+		if(t < (rankingtermos.length - 1)){
+			expres += ".*";
+		}
+	}
+	*
+	escrever("<br/> expressao = " + expres);
+	
+	marcarexpressao(expres, texto);
+	*/
+	
+	/***************************************************************
+		
+		// NESTA FUNCAO TEM QUE SER IMPLEMENTADO O FINDNEXT DO BROWSER;
+		
+		***************************************************************/
+	
+	
+</script>
+<!--
+<table border="1">
+	<tr>
+		<td>Texto de dentro da Tabela.</td>
+	</tr>
+<table>
+<p>Introdução.</p>
+<p>Os gregos criaram vários mitos para poder</p>
+<p>passar mensagens para as pessoas e também com o objetivo de preservar a memória histórica de seu povo. Há três mil anos, não havia explicações científicas para grande parte dos fenômenos da natureza ou para os acontecimentos históricos. Portanto, para buscar um significado para os fatos políticos, econômicos e sociais, os gregos criaram uma série de histórias, de origem imaginativa, que eram transmitidas, principalmente, através da literatura oral.</p>
+-->
+</body>
+</html>
