@@ -111,8 +111,8 @@
                 type="number"
                 size="2"
                 min="0" max="100"
+                oncommand="_setSimilarLevel(this.value)"
                 increment="5"
-                value="80"
                 disabled="true"/>
             <xul:label anonid="match-case-status" class="findbar-find-fast"/>
             <xul:image anonid="find-status-icon" class="findbar-find-fast find-status-icon"/>
@@ -135,7 +135,17 @@
             ]]></body>
         </method>
 
-        <method name="onFindAgainCommand">
+        <method name="_setSimilarLevel">
+            <parameter name="aValue"/>
+            <body><![CDATA[
+                var prefsvc = Components.classes["@mozilla.org/preferences-service;1"]
+                    .getService(Components.interfaces.nsIPrefBranch2);
+
+                prefsvc.setIntPref("extensions.smartfind.similarity_level",
+                    aValue);
+            ]]></body>
+        </method>
+<!--        <method name="onFindAgainCommand">
             <parameter name="aFindPrevious"/>
             <body><![CDATA[
                 var findString = this._browser.fastFind.searchString || this._findField.value;
@@ -161,8 +171,8 @@
                         this._updateStatusUI(res, aFindPrevious);
                     }
                 }
-        ]]></body>
-      </method>
+            ]]></body>
+        </method>-->
 
     </implementation>
 

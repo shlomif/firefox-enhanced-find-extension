@@ -46,4 +46,7 @@
         <stringbundle id="smartfind-strings" src="chrome://smartfind/locale/smartfind.properties"/>
     </stringbundleset>
 
+    <commandset id="mainCommandSet">
+        <command id="cmd_find" oncommand="smartFindOverlay.openFindBar()"/>
+    </commandset>
 </overlay>

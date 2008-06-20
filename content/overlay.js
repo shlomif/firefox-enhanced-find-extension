@@ -38,31 +38,48 @@ var smartFindOverlay =
 {
     observe: function(subject, topic, data) {
         if (data == "enabled") {
-            var level = document.getAnonymousElementByAttribute(this.findBar,
-                "anonid",
-                "findbar-similar-level");
-
-            var matchCase = document.getAnonymousElementByAttribute(this.findBar,
-                "anonid",
-                "find-case-sensitive");
-
             var enabled = this.mPrefs.getBoolPref(data);
-            level.disabled = !enabled;
-            matchCase.disabled = enabled;
+
+            this.findSimilarLevel.disabled = !enabled;
+            this.findSimilar.checked = enabled;
+            this.findMatchCase.disabled = enabled;
         }
+        else
+            if (data == "similarity_level") {
+                this.findSimilarLevel.value = this.mPrefs.getIntPref(data);
+            }
     },
 
     onLoad: function() {
         this.strings = document.getElementById("smartfind-strings");
 
         this.findBar = document.getElementById('FindToolbar');
+        this.findSimilarLevel = document.getAnonymousElementByAttribute(this.findBar,
+            "anonid",
+            "findbar-similar-level");
+        this.findMatchCase = document.getAnonymousElementByAttribute(this.findBar,
+            "anonid",
+            "find-case-sensitive");
+        this.findSimilar = document.getAnonymousElementByAttribute(this.findBar,
+            "anonid",
+            "findbar-similar");
 
         this.mPrefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefService)
-                .getBranch("extensions.smartfind.")
-                .QueryInterface(Components.interfaces.nsIPrefBranch2);
+            .getService(Components.interfaces.nsIPrefService)
+            .getBranch("extensions.smartfind.")
+            .QueryInterface(Components.interfaces.nsIPrefBranch2);
 
         this.mPrefs.addObserver("", this, false);
+    },
+
+    openFindBar: function() {
+        var enabled = this.mPrefs.getBoolPref("enabled");
+
+        this.findSimilar.checked = enabled;
+        this.findSimilarLevel.disabled = !enabled;
+        this.findSimilarLevel.value = this.mPrefs.getIntPref("similarity_level");
+
+        this.findBar.onFindCommand();
     },
 };
 
