@@ -46,8 +46,4 @@
         <stringbundle id="smartfind-strings" src="chrome://smartfind/locale/smartfind.properties"/>
     </stringbundleset>
 
-    <keyset>
-        <key id="smartFind_Dialog" modifiers="control shift" key="F" oncommand="smartFindOverlay.openDialog()"/>
-    </keyset>
-
 </overlay>

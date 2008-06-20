@@ -36,17 +36,34 @@
 
 var smartFindOverlay =
 {
-    onLoad: function() {
-        this.initialized = true;
-        this.strings = document.getElementById("smartfind-strings");
+    observe: function(subject, topic, data) {
+        if (data == "enabled") {
+            var level = document.getAnonymousElementByAttribute(this.findBar,
+                "anonid",
+                "findbar-similar-level");
+
+            var matchCase = document.getAnonymousElementByAttribute(this.findBar,
+                "anonid",
+                "find-case-sensitive");
+
+            var enabled = this.mPrefs.getBoolPref(data);
+            level.disabled = !enabled;
+            matchCase.disabled = enabled;
+        }
     },
 
-    openDialog: function() {
-        window.alert("gBrowser: " + gBrowser + " - window: " + window);
-        window.openDialog("chrome://smartfind/content/smartFindDialog.xul",
-                          "chrome,modal", "",
-                          gBrowser);
-    }
+    onLoad: function() {
+        this.strings = document.getElementById("smartfind-strings");
+
+        this.findBar = document.getElementById('FindToolbar');
+
+        this.mPrefs = Components.classes["@mozilla.org/preferences-service;1"]
+                .getService(Components.interfaces.nsIPrefService)
+                .getBranch("extensions.smartfind.")
+                .QueryInterface(Components.interfaces.nsIPrefBranch2);
+
+        this.mPrefs.addObserver("", this, false);
+    },
 };
 
 window.addEventListener("load", function(e) { smartFindOverlay.onLoad(e); }, false);
