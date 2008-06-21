@@ -48,7 +48,10 @@
         buttoniconextra2="go-back"
         ondialogextra1="smartFind.findNext()"
         ondialogextra2="smartFind.findPrevious()">
-    <script src="smartFind.js"/>
+
+    <script type="application/x-javascript" src="chrome://smartfind/content/smartFind.js" />
+    <script type="application/x-javascript" src="chrome://smartfind/content/similarity.js" />
+
     <textbox id="smartFind_FindString"/>
     <hbox align="center">
         <spacer flex="1"/>
