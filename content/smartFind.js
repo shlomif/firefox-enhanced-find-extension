@@ -55,10 +55,8 @@ var smartFind =
         var str = document.getElementById("smartFind_FindString").value;
 
         var similarity = document.getElementById("smartFind_similarity").value;
-        alert("[1] Searching for: " + str + " (" + similarity + ") doc: " + window.opener.content.document);
         // tipo from http://developer.mozilla.org/en/docs/Code_snippets:Tabbed_browser#Getting_document_of_currently_selected_tab
         var real_str = getSimilarTerms(window.opener.content.document, str, similarity);
-        alert("[2] Searching for: " + str + " (" + similarity + ") - " + real_str);
         this.browserFind.searchString = real_str;
         this.browserFind.findBackwards = false;
         var result = this.browserFind.findNext();
