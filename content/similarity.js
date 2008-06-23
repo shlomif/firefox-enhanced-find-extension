@@ -14,7 +14,7 @@
  * The Original Code is Smart Find.
  *
  * The Initial Developer of the Original Code is
- * Roberto Oliveira do Santos <betito.oliveira@gmail.com>.
+ * Roberto Oliveira dos Santos <betito.oliveira@gmail.com>.
  * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  *
@@ -40,7 +40,16 @@
 //*****************************
 // Levenshtein Distance
 //*****************************
-function min_value(a, b, c)
+
+function Lev(tofind, anyterm)
+{
+	this.toFind = tofind;
+	this.anyTerm = anyterm;
+	this.toFind_len = tofind.length;
+	this.anyTerm_len = anyterm.length;
+}
+
+Lev.prototype.minValue = function(a, b, c)
 {
 	var mi = parseInt(a);
 	if (parseInt(b) < mi)
@@ -54,7 +63,7 @@ function min_value(a, b, c)
 	return mi;
 }
 
-function lev_distance(s, t)
+Lev.prototype.distance = function()
 {
 	var n; // length of s
 	var m; // length of t
@@ -63,10 +72,12 @@ function lev_distance(s, t)
 	var s_i; // ith character of s
 	var t_j; // jth character of t
 	var cost; // cost
+	var s = this.toFind;
+	var t = this.anyTerm;
 
 	// Step 1
-	var n = parseInt(s.length);
-	var m = parseInt(t.length);
+	var n = this.toFind_len;
+	var m = this.anyTerm_len;
 
 	var d = new Array(n+1);
 
@@ -111,36 +122,31 @@ function lev_distance(s, t)
 				cost = 1;
 			}
 
-			d[i][j] = min_value(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + cost);
+			d[i][j] = this.minValue(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + cost);
 		}
 	}
 
 	return d[n][m];
 }
 
-function termScore(q, term)
+Lev.prototype.similarity = function()
 {
 	var most;
 	var score;
 
-	if(q.length > term.length)
+	if(this.toFind_len > this.anyTerm)
 	{
-		most = q.length;
+		most = this.toFind_len
 	}else
 	{
-		most = term.length;
+		most = this.anyTerm_len
 	}
 
-	score = parseFloat(parseInt(lev_distance(q, term))/most);
+	score = parseFloat(parseInt(this.distance(this.toFind, this.anyTerm))/most);
 
 	return (1-score);
 }
 
-// montar uma classe para armazenar (termo, score)
-/*function termsSim()
-{
-
-}*/
 
 // fazer uma lista de termos para testar o score
 function TermScore(term, score)
@@ -170,7 +176,7 @@ TermScore.prototype.getTermScore = function()
 	return this;
 }
 
-function bubble_sort(tl)
+function bubbleSort(tl)
 {
 	var term_list = tl;
 	for(i = 0; i < term_list.length; i++)
@@ -191,8 +197,7 @@ function bubble_sort(tl)
 	return term_list;
 }
 
-
-function extract_text_from_page(doc)
+function ExtractTextFromPage(doc)
 {
     var str_accum = "";
     var textnodes = doc.evaluate("//body//text()",
@@ -207,30 +212,71 @@ function extract_text_from_page(doc)
     return str_accum.split(/\s+/);
 }
 
-//function get_similar_terms(dom, treshould)
-function get_similar_terms(doc ,q)
+function getSimilarTerms(doc, q, t)
 {
-    var treshould = 0.7;
     var score_tmp = 0.0;
     var term_list = new Array();
-    var text_split = extract_text_from_page(doc);
+    var text_split = ExtractTextFromPage(doc);
     var terms_to_find = new Array();
+    var treshold = parseFloat(parseInt(t)/100);
 
-        for (i = 0; i < text_split.length; i++){
-            score_tmp = termScore(q, text_split[i]);
-            if (score_tmp >= treshould)
-            {
-                var x = new TermScore(text_split[i], score_tmp);
-                term_list.push(x);
-            }
-        }
+	for (i = 0; i < text_split.length; i++){
+		lev = new Lev(q, text_split[i]);
+		score_tmp = lev.similarity();
+		if (score_tmp >= treshold)
+		{
+			var x = new TermScore(text_split[i], score_tmp);
+			term_list.push(x);
+		}
+	}
 
-        // WTF: why bubble ?
-        sort_term_list = bubble_sort(term_list);
-        for (i = 0; i < sort_term_list.length; i++)
-        {
-            terms_to_find.push(sort_term_list[i].getTerm());
-        }
+        // WTF: why bubble ? :-)
+	sort_term_list = BubbleSort(term_list);
+	or (i = 0; i < sort_term_list.length; i++)
+	{
+		terms_to_find.push(sort_term_list[i].getTerm());
+	}
+		// this code is used to remove duplucated strings
+	var output_list = new Array();
+	if(sort_term_list.length > 1){
+		actual = sort_term_list[0].getTerm();
+		for (i = 1; i < sort_term_list.length; i++)
+		{
+			if(actual != sort_term_list[i].getTerm()){
+				output_list.push(actual);
+				actual = sort_term_list[i].getTerm();
+			}
+		}
+		output_list.push(sort_term_list[sort_term_list.length - 1].getTerm());
+	}
+	else
+	{
+		return sort_term_list[0];
+	}
+	// until here
+	
+	// let this line while not finished :-)
+    for (i = 0; i < output_list.length; i++){document.writeln("<br/>:: " + output_list[i]);}
 
-        return terms_to_find[0];
+	return output_list[0];
+ }
+
+
+
+function extract_text_from_pagex()
+{
+var texto = "	pessas pessoas filipe de sá mesquita  antonio gomes de araujo netto roberto oliveira dos santos ";
+	texto += "Introdução Os gregos criaram vários mitos para poder passar mensagens ";
+	texto += "para as pessoas e também com o objetivo de preservar a memória histórica ";
+	texto += " de seu povo. Há três mil anos, não havia explicações científicas para grande";
+	texto += " parte dos fenômenos da (natureza) ou para os andre pedraho  acontecimentos históricos. ";
+	texto += "Portanto, para buscar um significado para pesoas, também o objetvo os fatos políticos, econômicos e sociais, ";
+	texto += "os gregos criaran uma série de histórias, de origem imaginativa, que eram transmitidas,";
+	texto += "	principalmente, betiti san através tomaz noleto silva juntior da literatura oral.";
+
+	document.write(texto);
+	text_split = texto.split(/\s+/);
+	return text_split;
 }
+
+
