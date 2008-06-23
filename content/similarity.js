@@ -43,166 +43,154 @@
 
 function Lev(tofind, anyterm)
 {
-	this.toFind = tofind;
-	this.anyTerm = anyterm;
-	this.toFind_len = tofind.length;
-	this.anyTerm_len = anyterm.length;
+    this.toFind = tofind;
+    this.anyTerm = anyterm;
+    this.toFind_len = tofind.length;
+    this.anyTerm_len = anyterm.length;
 }
 
 Lev.prototype.minValue = function(a, b, c)
 {
-	var mi = parseInt(a);
-	if (parseInt(b) < mi)
-	{
-		mi = parseInt(b);
-	}
-	if (parseInt(c) < mi)
-	{
-		mi = parseInt(c);
-	}
-	return mi;
+    var mi = parseInt(a);
+    if (parseInt(b) < mi) {
+        mi = parseInt(b);
+    }
+    if (parseInt(c) < mi) {
+        mi = parseInt(c);
+    }
+    return mi;
 }
 
 Lev.prototype.distance = function()
 {
-	var n; // length of s
-	var m; // length of t
-	var i; // iterates through s
-	var j; // iterates through t
-	var s_i; // ith character of s
-	var t_j; // jth character of t
-	var cost; // cost
-	var s = this.toFind;
-	var t = this.anyTerm;
+    var n; // length of s
+    var m; // length of t
+    var i; // iterates through s
+    var j; // iterates through t
+    var s_i; // ith character of s
+    var t_j; // jth character of t
+    var cost; // cost
+    var s = this.toFind;
+    var t = this.anyTerm;
 
-	// Step 1
-	var n = this.toFind_len;
-	var m = this.anyTerm_len;
+    // Step 1
+    var n = this.toFind_len;
+    var m = this.anyTerm_len;
 
-	var d = new Array(n+1);
+    var d = new Array(n+1);
 
-	if (n == 0){return m;}
-	if (m == 0){return n;}
+    if (n == 0) { return m; }
+    if (m == 0) { return n; }
 
-	for(i = 0; i < n+1; i++)
-	{
-		var tmp = new Array(m+1);
-		d[i] = tmp;
-	}
+    for(i = 0; i < n+1; i++) {
+        var tmp = new Array(m+1);
+        d[i] = tmp;
+    }
 
-	for (i = 0; i <= n; i++)
-	{
-		for (j = 0; j <= m; j++)
-		{
-			d[i][j] = 0;
-		}
-	}
+    for (i = 0; i <= n; i++) {
+        for (j = 0; j <= m; j++) {
+            d[i][j] = 0;
+        }
+    }
 
-	for (i = 0; i <= n; i++)
-	{
-		d[i][0] = i;
-	}
+    for (i = 0; i <= n; i++) {
+        d[i][0] = i;
+    }
 
-	for (j = 0; j <= m; j++)
-	{
-		d[0][j] = j;
-	}
+    for (j = 0; j <= m; j++) {
+        d[0][j] = j;
+    }
 
-	for (i = 1; i <= n; i++)
-	{
-		var s_i = s.charAt(i - 1);
+    for (i = 1; i <= n; i++) {
+        var s_i = s.charAt(i - 1);
 
-		for (j = 1; j <= m; j++)
-		{
-			var t_j = t.charAt(j - 1);
+        for (j = 1; j <= m; j++) {
+            var t_j = t.charAt(j - 1);
 
-			if (s_i == t_j){
-				cost = 0;
-			}else{
-				cost = 1;
-			}
+            if (s_i == t_j) {
+                cost = 0;
+            } else {
+                cost = 1;
+            }
 
-			d[i][j] = this.minValue(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + cost);
-		}
-	}
+            d[i][j] = this.minValue(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + cost);
+        }
+    }
 
-	return d[n][m];
+    return d[n][m];
 }
 
 Lev.prototype.similarity = function()
 {
-	var most;
-	var score;
+    var most;
+    var score;
 
-	if(this.toFind_len > this.anyTerm)
-	{
-		most = this.toFind_len
-	}else
-	{
-		most = this.anyTerm_len
-	}
+    if(this.toFind_len > this.anyTerm) {
+        most = this.toFind_len;
+    } else {
+        most = this.anyTerm_len;
+    }
 
-	score = parseFloat(parseInt(this.distance(this.toFind, this.anyTerm))/most);
+    score = parseFloat(parseInt(this.distance(this.toFind, this.anyTerm))/most);
 
-	return (1-score);
+    return (1-score);
 }
 
 
-// fazer uma lista de termos para testar o score
+// create a list of terms to test the score
 function TermScore(term, score)
 {
-	this.term = term;
-	this.score = score;
+    this.term = term;
+    this.score = score;
 }
 
 TermScore.prototype.setTermScore = function(term, score)
 {
-	this.term = term;
-	this.score = score;
+    this.term = term;
+    this.score = score;
 }
 
 TermScore.prototype.getScore = function()
 {
-	return this.score;
+    return this.score;
 }
 
 TermScore.prototype.getTerm = function()
 {
-	return this.term;
+    return this.term;
 }
 
 TermScore.prototype.getTermScore = function()
 {
-	return this;
+    return this;
 }
 
 function bubbleSort(tl)
 {
-	var term_list = tl;
-	for(i = 0; i < term_list.length; i++)
-	{
-		var x = term_list[i];
-		for(j = i; j < term_list.length; j++){
-			var y = term_list[j];
-			if(x.getScore() < y.getScore()){
-				var tmp = x;
-				x = y;
-				y = tmp;
-				term_list[i] = x;
-				term_list[j] = y;
-			}
-		}
-	}
+    var term_list = tl;
+    for (i = 0; i < term_list.length; i++) {
+        var x = term_list[i];
+        for (j = i; j < term_list.length; j++) {
+            var y = term_list[j];
+            if(x.getScore() < y.getScore()) {
+                var tmp = x;
+                x = y;
+                y = tmp;
+                term_list[i] = x;
+                term_list[j] = y;
+            }
+        }
+    }
 
-	return term_list;
+    return term_list;
 }
 
-function ExtractTextFromPage(doc)
+function extractTextFromPage(doc)
 {
     var str_accum = "";
     var textnodes = doc.evaluate("//body//text()",
-                                      doc, null,
-                                      XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+                                    doc, null,
+                                    XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
     for (var i = 0; i < textnodes.snapshotLength; i++) {
         var node = textnodes.snapshotItem(i);
@@ -216,67 +204,44 @@ function getSimilarTerms(doc, q, t)
 {
     var score_tmp = 0.0;
     var term_list = new Array();
-    var text_split = ExtractTextFromPage(doc);
+    var text_split = extractTextFromPage(doc);
     var terms_to_find = new Array();
     var treshold = parseFloat(parseInt(t)/100);
 
-	for (i = 0; i < text_split.length; i++){
-		lev = new Lev(q, text_split[i]);
-		score_tmp = lev.similarity();
-		if (score_tmp >= treshold)
-		{
-			var x = new TermScore(text_split[i], score_tmp);
-			term_list.push(x);
-		}
-	}
+    for (i = 0; i < text_split.length; i++) {
+        lev = new Lev(q, text_split[i]);
+        score_tmp = lev.similarity();
+        if (score_tmp >= treshold) {
+            var x = new TermScore(text_split[i], score_tmp);
+            term_list.push(x);
+        }
+    }
 
-        // WTF: why bubble ? :-)
-	sort_term_list = bubbleSort(term_list);
-	for (i = 0; i < sort_term_list.length; i++)
-	{
-		terms_to_find.push(sort_term_list[i].getTerm());
-	}
-		// this code is used to remove duplucated strings
-	var output_list = new Array();
-	if(sort_term_list.length > 1){
-		actual = sort_term_list[0].getTerm();
-		for (i = 1; i < sort_term_list.length; i++)
-		{
-			if(actual != sort_term_list[i].getTerm()){
-				output_list.push(actual);
-				actual = sort_term_list[i].getTerm();
-			}
-		}
-		output_list.push(sort_term_list[sort_term_list.length - 1].getTerm());
-	}
-	else
-	{
-		return sort_term_list[0].getTerm();
-	}
-	// until here
+    // WTF: why bubble ? :-)
+    sort_term_list = bubbleSort(term_list);
+    for (i = 0; i < sort_term_list.length; i++)
+    {
+        terms_to_find.push(sort_term_list[i].getTerm());
+    }
 
-	// let this line while not finished :-)
+    // this code is used to remove duplucated strings
+    var output_list = new Array();
+    if(sort_term_list.length > 1) {
+        actual = sort_term_list[0].getTerm();
+        for (i = 1; i < sort_term_list.length; i++) {
+            if(actual != sort_term_list[i].getTerm()) {
+                output_list.push(actual);
+                actual = sort_term_list[i].getTerm();
+            }
+        }
+        output_list.push(sort_term_list[sort_term_list.length - 1].getTerm());
+    } else {
+        return sort_term_list[0].getTerm();
+    }
+    // until here
+
+    // let this line while not finished :-)
 //     for (i = 0; i < output_list.length; i++){document.writeln("<br/>:: " + output_list[i]);}
 
-	return output_list[0];
- }
-
-
-
-function extract_text_from_pagex()
-{
-var texto = "	pessas pessoas filipe de sá mesquita  antonio gomes de araujo netto roberto oliveira dos santos ";
-	texto += "Introdução Os gregos criaram vários mitos para poder passar mensagens ";
-	texto += "para as pessoas e também com o objetivo de preservar a memória histórica ";
-	texto += " de seu povo. Há três mil anos, não havia explicações científicas para grande";
-	texto += " parte dos fenômenos da (natureza) ou para os andre pedraho  acontecimentos históricos. ";
-	texto += "Portanto, para buscar um significado para pesoas, também o objetvo os fatos políticos, econômicos e sociais, ";
-	texto += "os gregos criaran uma série de histórias, de origem imaginativa, que eram transmitidas,";
-	texto += "	principalmente, betiti san através tomaz noleto silva juntior da literatura oral.";
-
-	document.write(texto);
-	text_split = texto.split(/\s+/);
-	return text_split;
+    return output_list[0];
 }
-
-
