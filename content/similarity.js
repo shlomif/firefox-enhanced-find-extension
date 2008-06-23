@@ -231,8 +231,8 @@ function getSimilarTerms(doc, q, t)
 	}
 
         // WTF: why bubble ? :-)
-	sort_term_list = BubbleSort(term_list);
-	or (i = 0; i < sort_term_list.length; i++)
+	sort_term_list = bubbleSort(term_list);
+	for (i = 0; i < sort_term_list.length; i++)
 	{
 		terms_to_find.push(sort_term_list[i].getTerm());
 	}
@@ -251,12 +251,12 @@ function getSimilarTerms(doc, q, t)
 	}
 	else
 	{
-		return sort_term_list[0];
+		return sort_term_list[0].getTerm();
 	}
 	// until here
-	
+
 	// let this line while not finished :-)
-    for (i = 0; i < output_list.length; i++){document.writeln("<br/>:: " + output_list[i]);}
+//     for (i = 0; i < output_list.length; i++){document.writeln("<br/>:: " + output_list[i]);}
 
 	return output_list[0];
  }
