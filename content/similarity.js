@@ -189,8 +189,8 @@ function extractTextFromPage(doc)
 {
     var str_accum = "";
     var textnodes = doc.evaluate("//body//text()",
-                                    doc, null,
-                                    XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+                                 doc, null,
+                                 XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
     for (var i = 0; i < textnodes.snapshotLength; i++) {
         var node = textnodes.snapshotItem(i);

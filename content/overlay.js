@@ -36,9 +36,22 @@
 
 var smartFindOverlay =
 {
+    observe: function(subject, topic, data) {
+        if (data == "similarity_level") {
+            this.findSimilarLevel.value = this.mPrefs.getIntPref(data);
+        }
+    },
+
     onLoad: function() {
         this.initialized = true;
         this.strings = document.getElementById("smartfind-strings");
+
+        this.mPrefs = Components.classes["@mozilla.org/preferences-service;1"]
+                .getService(Components.interfaces.nsIPrefService)
+                .getBranch("extensions.smartfind.")
+                .QueryInterface(Components.interfaces.nsIPrefBranch2);
+
+        this.mPrefs.addObserver("", this, false);
     },
 
     openDialog: function() {

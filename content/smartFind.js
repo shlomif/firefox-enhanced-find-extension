@@ -41,24 +41,36 @@ var smartFind =
         this.browser = window.arguments[0];
         this.browserFind = this.browser.selectedBrowser.webBrowserFind;
         this.browserFind.wrapFind = true;
+        this.curStr = "";
+        this.realStr = "";
+    },
+
+    findSameString: function(str) {
+        if (str == this.curStr)
+            return true;
+        else
+            return false;
+    },
+
+    runFind: function(backwards) {
+        var curStr = document.getElementById("smartFind_FindString").value;
+        var similarity = document.getElementById("smartFind_similarity").value;
+
+        if (!this.findSameString(curStr)) {
+            this.realStr = getSimilarTerms(window.opener.content.document, curStr, similarity);
+        }
+
+        this.curStr = curStr;
+        this.browserFind.searchString = this.realStr;
+        this.browserFind.findBackwards = backwards;
+        var result = this.browserFind.findNext();
     },
 
     findPrevious: function() {
-        var str = document.getElementById("smartFind_FindString").value;
-        this.similarity = document.getElementById("smartFind_similarity").value;
-        this.browserFind.searchString = str;
-        this.browserFind.findBackwards = true;
-        var result = this.browserFind.findNext();
+        this.runFind(true);
     },
 
     findNext: function() {
-        var str = document.getElementById("smartFind_FindString").value;
-
-        var similarity = document.getElementById("smartFind_similarity").value;
-        // tipo from http://developer.mozilla.org/en/docs/Code_snippets:Tabbed_browser#Getting_document_of_currently_selected_tab
-        var real_str = getSimilarTerms(window.opener.content.document, str, similarity);
-        this.browserFind.searchString = real_str;
-        this.browserFind.findBackwards = false;
-        var result = this.browserFind.findNext();
+        this.runFind(false);
     }
 }

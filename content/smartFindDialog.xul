@@ -47,15 +47,20 @@
         buttoniconextra1="go-forward"
         buttoniconextra2="go-back"
         ondialogextra1="smartFind.findNext()"
-        ondialogextra2="smartFind.findPrevious()">
+        ondialogextra2="smartFind.findPrevious()"
+        defaultButton="extra1">
 
     <script type="application/x-javascript" src="chrome://smartfind/content/smartFind.js" />
     <script type="application/x-javascript" src="chrome://smartfind/content/similarity.js" />
+
+    <keyset>
+        <key id="smartFind_findNext" key="F3" oncommand="smartFind.findNext()"/>
+    </keyset>
 
     <textbox id="smartFind_FindString"/>
     <hbox align="center">
         <spacer flex="1"/>
         <label value="Similarity (0-100): " control="smartFind_similarity"/>
-        <textbox id="smartFind_similarity" type="number" size="3" min="0" max="100" increment="5" value="80"/>
+        <textbox id="smartFind_similarity" type="number" size="3" min="0" max="100" increment="5" value="50"/>
     </hbox>
 </dialog>
