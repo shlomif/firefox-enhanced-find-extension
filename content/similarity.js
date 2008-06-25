@@ -43,8 +43,8 @@
 
 function Lev(tofind, anyterm)
 {
-    this.toFind = tofind;
-    this.anyTerm = anyterm;
+    this.toFind = tofind.toLowerCase();
+    this.anyTerm = anyterm.toLowerCase();
     this.toFind_len = tofind.length;
     this.anyTerm_len = anyterm.length;
 }
