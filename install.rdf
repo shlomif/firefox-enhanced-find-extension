@@ -14,7 +14,6 @@
     <em:description>Allows the user to query for similar terms in a page.</em:description>
     <em:homepageURL>http://code.google.com/p/smartfind/</em:homepageURL>
     <em:aboutURL>chrome://smartfind/content/about.xul</em:aboutURL>
-    <em:optionsURL>chrome://smartfind/content/options.xul</em:optionsURL>
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
