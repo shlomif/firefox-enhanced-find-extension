@@ -167,6 +167,7 @@ TermScore.prototype.getTermScore = function()
 
 function bubbleSort(tl)
 {
+    var i, j;
     var term_list = tl;
     for (i = 0; i < term_list.length; i++) {
         var x = term_list[i];
@@ -207,6 +208,7 @@ function getSimilarTerms(doc, q, t)
     var text_split = extractTextFromPage(doc);
     var terms_to_find = new Array();
     var treshold = parseFloat(parseInt(t)/100);
+    var i, j, lev, sort_term_list, actual;
 
     for (i = 0; i < text_split.length; i++) {
         lev = new Lev(q, text_split[i]);
@@ -240,8 +242,14 @@ function getSimilarTerms(doc, q, t)
     }
     // until here
 
+    var output_str = "";
     // let this line while not finished :-)
-//     for (i = 0; i < output_list.length; i++){document.writeln("<br/>:: " + output_list[i]);}
+    for (i = 0; i < output_list.length; i++) {
+//         document.writeln("<br/>:: " + output_list[i]);
+        output_str += output_list[i] + " ";
+    }
+
+    alert("Found " + output_list.length + " similar word(s):\n" + output_str);
 
     return output_list[0];
 }

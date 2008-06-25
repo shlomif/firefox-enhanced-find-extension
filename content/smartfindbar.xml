@@ -12,14 +12,14 @@
   - for the specific language governing rights and limitations under the
   - License.
   -
-  - The Original Code is Smart Find.
+  - The Original Code is mozilla.org viewsource frontend.
   -
   - The Initial Developer of the Original Code is
-  - Tomaz Nolêto <tnoleto@gmail.com>.
-  - Portions created by the Initial Developer are Copyright (C) 2008
+  - Netscape Communications Corporation.
+  - Portions created by the Initial Developer are Copyright (C) 2003
   - the Initial Developer. All Rights Reserved.
   -
-  - Contributor(s):
+  - Contributor(s): Tomaz Nolêto <tnoleto@gmail.com>
   -
   - Alternatively, the contents of this file may be used under the terms of
   - either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -101,19 +101,16 @@
                 label="&caseSensitiveCheckbox.label;"
                 accesskey="&caseSensitiveCheckbox.accesskey;"
                 xbl:inherits="accesskey=matchcaseaccesskey"/>
-            <xul:checkbox anonid="findbar-similar"
+            <xul:checkbox anonid="find-similar"
                 oncommand="_setSimilar(this.checked)"
                 label="Similar"
-                accesskey="s"
-                xbl:inherits="accesskey=matchcaseaccesskey"/>
-            <xul:textbox class="findbar-similar-level"
-                anonid="findbar-similar-level"
+                accesskey="s"/>
+            <xul:textbox anonid="find-similar-level"
                 type="number"
                 size="2"
                 min="0" max="100"
                 oncommand="_setSimilarLevel(this.value)"
-                increment="5"
-                disabled="true"/>
+                increment="5"/>
             <xul:label anonid="match-case-status" class="findbar-find-fast"/>
             <xul:image anonid="find-status-icon" class="findbar-find-fast find-status-icon"/>
             <xul:description anonid="find-status" class="findbar-find-fast findbar-find-status"
@@ -122,59 +119,78 @@
             </xul:hbox>
         </content>
 
-    <implementation implements="nsIDOMEventListener">
+        <implementation implements="nsIDOMEventListener">
 
-        <method name="_setSimilar">
-            <parameter name="aSimilar"/>
-            <body><![CDATA[
+            <constructor><![CDATA[
                 var prefsvc = Components.classes["@mozilla.org/preferences-service;1"]
                     .getService(Components.interfaces.nsIPrefBranch2);
 
-                prefsvc.setBoolPref("extensions.smartfind.enabled",
-                    aSimilar ? true : false);
-            ]]></body>
-        </method>
+                this._similar = prefsvc.getBoolPref("extensions.smartfind.enabled");
+                this._similarLevel = prefsvc.getIntPref("extensions.smartfind.similarity_level");
+            ]]></constructor>
 
-        <method name="_setSimilarLevel">
-            <parameter name="aValue"/>
-            <body><![CDATA[
-                var prefsvc = Components.classes["@mozilla.org/preferences-service;1"]
-                    .getService(Components.interfaces.nsIPrefBranch2);
+            <method name="_setSimilar">
+                <parameter name="aSimilar"/>
+                <body><![CDATA[
+                    var prefsvc = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefBranch2);
 
-                prefsvc.setIntPref("extensions.smartfind.similarity_level",
-                    aValue);
-            ]]></body>
-        </method>
-<!--        <method name="onFindAgainCommand">
-            <parameter name="aFindPrevious"/>
-            <body><![CDATA[
-                var findString = this._browser.fastFind.searchString || this._findField.value;
+                    prefsvc.setBoolPref("extensions.smartfind.enabled",
+                        aSimilar ? true : false);
+                        this._similar = aSimilar;
+                ]]></body>
+            </method>
+
+            <method name="_setSimilarLevel">
+                <parameter name="aValue"/>
+                <body><![CDATA[
+                    var prefsvc = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefBranch2);
+
+                    prefsvc.setIntPref("extensions.smartfind.similarity_level",
+                        aValue);
+                    this._similarLevel = aValue;
+                ]]></body>
+            </method>
+
+            <method name="onFindAgainCommand">
+                <parameter name="aFindPrevious"/>
+                <body><![CDATA[
+                Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                    .getService(Ci.mozIJSSubScriptLoader)
+                    .loadSubScript("chrome://smartfind/content/similarity.js");
+
+                var findString;
+
                 if (!findString) {
                     this.startFind();
                     return;
                 }
-
                 var res;
                 // Ensure the stored SearchString is in sync with what we want to find
                 if (this._findField.value != this._browser.fastFind.searchString &&
-                    !this.hidden)
-                    res = this._find(this._findField.value);
+                    !this.hidden) {
+                    if (this._similar) {
+                        findString = getSimilarTerms(this.browser.contentWindow.document,
+                            this._browser.fastFind.searchString, this._similarLevel);
+                    }
+                    res = this._find(findString);
+                }
                 else
                     res = this._findAgain(aFindPrevious);
 
                 if (res == this.nsITypeAheadFind.FIND_NOTFOUND) {
                     if (this.open()) {
-                        if (this._findMode != this.FIND_NORMAL)
-                            this._setFindCloseTimeout();
-                        this._findField.focus();
-                        this._findField.focus();
-                        this._updateStatusUI(res, aFindPrevious);
+                    if (this._findMode != this.FIND_NORMAL)
+                        this._setFindCloseTimeout();
+                    this._findField.focus();
+                    this._findField.focus();
+                    this._updateStatusUI(res, aFindPrevious);
                     }
                 }
-            ]]></body>
-        </method>-->
+                ]]></body>
+            </method>
 
-    </implementation>
-
-  </binding>
+        </implementation>
+    </binding>
 </bindings>

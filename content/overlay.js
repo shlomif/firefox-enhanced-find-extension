@@ -53,16 +53,9 @@ var smartFindOverlay =
     onLoad: function() {
         this.strings = document.getElementById("smartfind-strings");
 
-        this.findBar = document.getElementById('FindToolbar');
-        this.findSimilarLevel = document.getAnonymousElementByAttribute(this.findBar,
-            "anonid",
-            "findbar-similar-level");
-        this.findMatchCase = document.getAnonymousElementByAttribute(this.findBar,
-            "anonid",
-            "find-case-sensitive");
-        this.findSimilar = document.getAnonymousElementByAttribute(this.findBar,
-            "anonid",
-            "findbar-similar");
+        this.findSimilar = gFindBar.getElement("find-similar");
+        this.findSimilarLevel = gFindBar.getElement("find-similar-level");
+        this.findMatchCase = gFindBar.getElement("find-case-sensitive");
 
         this.mPrefs = Components.classes["@mozilla.org/preferences-service;1"]
             .getService(Components.interfaces.nsIPrefService)
@@ -79,7 +72,7 @@ var smartFindOverlay =
         this.findSimilarLevel.disabled = !enabled;
         this.findSimilarLevel.value = this.mPrefs.getIntPref("similarity_level");
 
-        this.findBar.onFindCommand();
+        gFindBar.onFindCommand();
     },
 };
 
