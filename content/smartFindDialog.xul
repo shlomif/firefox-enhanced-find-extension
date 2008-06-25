@@ -58,9 +58,14 @@
     </keyset>
 
     <textbox id="smartFind_FindString"/>
+	
     <hbox align="center">
         <spacer flex="1"/>
-        <label value="Similarity (0-100): " control="smartFind_similarity"/>
-        <textbox id="smartFind_similarity" type="number" size="3" min="0" max="100" increment="5" value="50"/>
+        <label value="Similarity: " control="smartFind_similarity"/>
+        <radiogroup orient="horizontal" id="smartFind_similarity">
+            <radio label="Low"  accesskey="L" value="25"/>
+            <radio label="Medium"  accesskey="M" value="50" selected="true"/>
+            <radio label="High" accesskey="H" value="80"/>
+        </radiogroup>
     </hbox>
 </dialog>

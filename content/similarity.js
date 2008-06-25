@@ -240,8 +240,5 @@ function getSimilarTerms(doc, q, t)
     }
     // until here
 
-    // let this line while not finished :-)
-//     for (i = 0; i < output_list.length; i++){document.writeln("<br/>:: " + output_list[i]);}
-
     return output_list[0];
 }
