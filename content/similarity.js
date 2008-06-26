@@ -212,7 +212,7 @@ function getSimilarTerms(doc, q, t)
 
     for (i = 0; i < text_split.length; i++) {
         // TBD: move the regexp to the split sentense.
-        text_split[i] = text_split[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|'|:|;|\?|\[|\]]+$/, "")
+        text_split[i] = text_split[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|'|:|;|\?|\[|\]]+/, "")
         lev = new Lev(q, text_split[i]);
         score_tmp = lev.similarity();
         if (score_tmp >= treshold) {
