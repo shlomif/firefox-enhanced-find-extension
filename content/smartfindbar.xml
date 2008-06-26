@@ -103,8 +103,8 @@
                 xbl:inherits="accesskey=matchcaseaccesskey"/>
             <xul:checkbox anonid="find-similar"
                 oncommand="_setSimilar(this.checked)"
-                label="Similar"
-                accesskey="s"/>
+                label="&smartfindSimilarCheckbox.label;"
+                accesskey="&smartfindSimilarCheckbox.accesskey;"/>
             <xul:textbox anonid="find-similar-level"
                 type="number"
                 size="2"
