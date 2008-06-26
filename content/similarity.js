@@ -198,7 +198,7 @@ function extractTextFromPage(doc)
         str_accum += node.data;
     }
 
-    return str_accum.split(/\W+/);
+    return str_accum.split(/\s+/);
 }
 
 function getSimilarTerms(doc, q, t)
@@ -211,6 +211,8 @@ function getSimilarTerms(doc, q, t)
     var i, j, lev, sort_term_list, actual;
 
     for (i = 0; i < text_split.length; i++) {
+        // TBD: move the regexp to the split sentense.
+        text_split[i] = text_split[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|'|:|;|\?|\[|\]]+$/, "")
         lev = new Lev(q, text_split[i]);
         score_tmp = lev.similarity();
         if (score_tmp >= treshold) {
