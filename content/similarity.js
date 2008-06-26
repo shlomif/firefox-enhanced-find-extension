@@ -198,7 +198,7 @@ function extractTextFromPage(doc)
         str_accum += node.data;
     }
 
-    return str_accum.split(/\s+/);
+    return str_accum.split(/\W+/);
 }
 
 function getSimilarTerms(doc, q, t)
