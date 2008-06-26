@@ -244,12 +244,10 @@ function getSimilarTerms(doc, q, t)
 
     var output_str = "";
     // let this line while not finished :-)
-    for (i = 0; i < output_list.length; i++) {
-//         document.writeln("<br/>:: " + output_list[i]);
+    for (i = 0; i < output_list.length; i++)
         output_str += output_list[i] + " ";
-    }
 
-    alert("Found " + output_list.length + " similar word(s):\n" + output_str);
+    dump("\nFound " + output_list.length + " similar word(s): " + output_str + "\n\n");
 
     return output_list[0];
 }
