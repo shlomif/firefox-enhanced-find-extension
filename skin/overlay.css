@@ -3,3 +3,8 @@
 findbar {
   -moz-binding: url("chrome://smartfind/content/smartfindbar.xml#smartfindbar") !important;
 }
+
+.findbar-textbox[status="foundsimilar"] {
+  background-color: #2cb7b9;
+  color: #FFFFFF;
+}

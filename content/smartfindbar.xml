@@ -176,7 +176,6 @@
                     }
                     else {
                         res = this._findAgain(aFindPrevious);
-                        dump("findAgain: " + res + "\n");
                         // If SearchString was not found, try a similar string if enabled
                         if (res == 1 && this._similar) {
                             dump("String '" + this._findField.value + "' not found at all.\n");
@@ -185,7 +184,9 @@
                             dump("Searching for similar string: " + findString + "\n");
                             res = this._find(findString);
 
-                            // Setting findbar entry and SearchString to be the similar string found.
+                            // Change entry background color when finding similar word
+                            this._findField.setAttribute("status", "foundsimilar");
+                            // Set findbar entry and SearchString to be the similar string found.
                             this._findField.value = findString;
                         }
                     }
