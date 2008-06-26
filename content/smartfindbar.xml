@@ -156,41 +156,51 @@
             <method name="onFindAgainCommand">
                 <parameter name="aFindPrevious"/>
                 <body><![CDATA[
-                Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                    .getService(Ci.mozIJSSubScriptLoader)
-                    .loadSubScript("chrome://smartfind/content/similarity.js");
+                    Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                        .getService(Ci.mozIJSSubScriptLoader)
+                        .loadSubScript("chrome://smartfind/content/similarity.js");
 
-                var findString;
-
-                if (!findString) {
-                    this.startFind();
-                    return;
-                }
-                var res;
-                // Ensure the stored SearchString is in sync with what we want to find
-                if (this._findField.value != this._browser.fastFind.searchString &&
-                    !this.hidden) {
-                    if (this._similar) {
-                        findString = getSimilarTerms(this.browser.contentWindow.document,
-                            this._browser.fastFind.searchString, this._similarLevel);
+                    var findString = this._browser.fastFind.searchString || this._findField.value;
+                    dump("[START] Find again: " + findString + "\n");
+                    if (!findString) {
+                        this.startFind();
+                        return;
                     }
-                    res = this._find(findString);
-                }
-                else
-                    res = this._findAgain(aFindPrevious);
 
-                if (res == this.nsITypeAheadFind.FIND_NOTFOUND) {
-                    if (this.open()) {
-                    if (this._findMode != this.FIND_NORMAL)
-                        this._setFindCloseTimeout();
-                    this._findField.focus();
-                    this._findField.focus();
-                    this._updateStatusUI(res, aFindPrevious);
+                    var res;
+                    // Ensure the stored SearchString is in sync with what we want to find
+                    if (this._findField.value != this._browser.fastFind.searchString &&
+                        !this.hidden) {
+                        dump("Searching for actual string: " + this._findField.value + "\n");
+                        res = this._find(this._findField.value);
                     }
-                }
+                    else {
+                        res = this._findAgain(aFindPrevious);
+                        dump("findAgain: " + res + "\n");
+                        // If SearchString was not found, try a similar string if enabled
+                        if (res == 1 && this._similar) {
+                            dump("String '" + this._findField.value + "' not found at all.\n");
+                            findString = getSimilarTerms(this.browser.contentWindow.document,
+                                this._browser.fastFind.searchString, this._similarLevel);
+                            dump("Searching for similar string: " + findString + "\n");
+                            res = this._find(findString);
+
+                            // Setting findbar entry and SearchString to be the similar string found.
+                            this._findField.value = findString;
+                        }
+                    }
+
+                    if (res == this.nsITypeAheadFind.FIND_NOTFOUND) {
+                        if (this.open()) {
+                        if (this._findMode != this.FIND_NORMAL)
+                            this._setFindCloseTimeout();
+                        this._findField.focus();
+                        this._findField.focus();
+                        this._updateStatusUI(res, aFindPrevious);
+                        }
+                    }
                 ]]></body>
             </method>
-
         </implementation>
     </binding>
 </bindings>

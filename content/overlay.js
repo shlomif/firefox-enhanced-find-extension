@@ -68,6 +68,7 @@ var smartFindOverlay =
     openFindBar: function() {
         var enabled = this.mPrefs.getBoolPref("enabled");
 
+        this.findMatchCase.disabled = enabled;
         this.findSimilar.checked = enabled;
         this.findSimilarLevel.disabled = !enabled;
         this.findSimilarLevel.value = this.mPrefs.getIntPref("similarity_level");
