@@ -37,19 +37,19 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-//*****************************
-// Levenshtein Distance
-//*****************************
+/************************
+ * Levenshtein Distance *
+ ************************/
 
-function Lev(tofind, anyterm)
+function LevDistance(tofind, anyterm)
 {
     this.toFind = tofind.toLowerCase();
     this.anyTerm = anyterm.toLowerCase();
-    this.toFind_len = tofind.length;
-    this.anyTerm_len = anyterm.length;
+    this.toFindLen = tofind.length;
+    this.anyTermLen = anyterm.length;
 }
 
-Lev.prototype.minValue = function(a, b, c)
+LevDistance.prototype.minValue = function(a, b, c)
 {
     var mi = parseInt(a);
     if (parseInt(b) < mi) {
@@ -61,7 +61,7 @@ Lev.prototype.minValue = function(a, b, c)
     return mi;
 }
 
-Lev.prototype.distance = function()
+LevDistance.prototype.distance = function()
 {
     var n; // length of s
     var m; // length of t
@@ -74,8 +74,8 @@ Lev.prototype.distance = function()
     var t = this.anyTerm;
 
     // Step 1
-    var n = this.toFind_len;
-    var m = this.anyTerm_len;
+    var n = this.toFindLen;
+    var m = this.anyTermLen;
 
     var d = new Array(n+1);
 
@@ -120,15 +120,15 @@ Lev.prototype.distance = function()
     return d[n][m];
 }
 
-Lev.prototype.similarity = function()
+LevDistance.prototype.similarity = function()
 {
     var most;
     var score;
 
-    if(this.toFind_len > this.anyTerm) {
-        most = this.toFind_len;
+    if(this.toFindLen > this.anyTerm) {
+        most = this.toFindLen;
     } else {
-        most = this.anyTerm_len;
+        most = this.anyTermLen;
     }
 
     score = parseFloat(parseInt(this.distance(this.toFind, this.anyTerm))/most);
@@ -165,91 +165,60 @@ TermScore.prototype.getTermScore = function()
     return this;
 }
 
-function bubbleSort(tl)
+function getMostSimilarTerm(termList)
 {
-    var i, j;
-    var term_list = tl;
-    for (i = 0; i < term_list.length; i++) {
-        var x = term_list[i];
-        for (j = i; j < term_list.length; j++) {
-            var y = term_list[j];
-            if(x.getScore() < y.getScore()) {
-                var tmp = x;
-                x = y;
-                y = tmp;
-                term_list[i] = x;
-                term_list[j] = y;
-            }
-        }
+    var i;
+    var mostSimilarTem = termList[0];
+
+    for(i = 1; i < termList.length; i++) {
+        if (termList[i].getScore() > mostSimilarTem.getScore())
+            mostSimilarTem = termList[i];
     }
 
-    return term_list;
+    return mostSimilarTem.getTerm();
 }
 
 function extractTextFromPage(doc)
 {
-    var str_accum = "";
-    var textnodes = doc.evaluate("//body//text()",
+    var textStr = "";
+    var textNodes = doc.evaluate("//body//text()",
                                  doc, null,
                                  XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
-    for (var i = 0; i < textnodes.snapshotLength; i++) {
-        var node = textnodes.snapshotItem(i);
-        str_accum += node.data;
+    for (var i = 0; i < textNodes.snapshotLength; i++) {
+        var node = textNodes.snapshotItem(i);
+        textStr += node.data;
     }
 
-    return str_accum.split(/\s+/);
+    return textStr.split(/\s+/);
 }
 
 function getSimilarTerms(doc, q, t)
 {
-    var score_tmp = 0.0;
-    var term_list = new Array();
-    var text_split = extractTextFromPage(doc);
-    var terms_to_find = new Array();
+    var scoreTmp = 0.0;
+    var termList = new Array();
+    var textSplitList = extractTextFromPage(doc);
     var treshold = parseFloat(parseInt(t)/100);
-    var i, j, lev, sort_term_list, actual;
+    var i, levDistance;
 
-    for (i = 0; i < text_split.length; i++) {
-        // TBD: move the regexp to the split sentense.
-        text_split[i] = text_split[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|'|:|;|\?|\[|\]]+/, "")
-        lev = new Lev(q, text_split[i]);
-        score_tmp = lev.similarity();
-        if (score_tmp >= treshold) {
-            var x = new TermScore(text_split[i], score_tmp);
-            term_list.push(x);
+    var smallwords = 0;
+
+    for (i = 0; i < textSplitList.length; i++) {
+        // TBD: move the regexp to the split phrase.
+        if (textSplitList[i].length < 3)
+            continue;
+
+        textSplitList[i] = textSplitList[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+$/, "");
+        textSplitList[i] = textSplitList[i].replace(/^[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]]+/, "");
+
+        levDistance = new LevDistance(q, textSplitList[i]);
+        scoreTmp = levDistance.similarity();
+
+        if (scoreTmp >= treshold) {
+            var x = new TermScore(textSplitList[i], scoreTmp);
+            termList.push(x);
         }
     }
 
-    // WTF: why bubble ? :-)
-    sort_term_list = bubbleSort(term_list);
-    for (i = 0; i < sort_term_list.length; i++)
-    {
-        terms_to_find.push(sort_term_list[i].getTerm());
-    }
-
-    // this code is used to remove duplucated strings
-    var output_list = new Array();
-    if(sort_term_list.length > 1) {
-        actual = sort_term_list[0].getTerm();
-        for (i = 1; i < sort_term_list.length; i++) {
-            if(actual != sort_term_list[i].getTerm()) {
-                output_list.push(actual);
-                actual = sort_term_list[i].getTerm();
-            }
-        }
-        output_list.push(sort_term_list[sort_term_list.length - 1].getTerm());
-    } else {
-        return sort_term_list[0].getTerm();
-    }
-    // until here
-
-    var output_str = "";
-    // let this line while not finished :-)
-    for (i = 0; i < output_list.length; i++)
-        output_str += output_list[i] + " ";
-
-    dump("\nFound " + output_list.length + " similar word(s): " + output_str + "\n\n");
-
-    return output_list[0];
+    return getMostSimilarTerm(termList);
 }
