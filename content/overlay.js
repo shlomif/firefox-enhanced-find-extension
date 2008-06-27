@@ -40,21 +40,21 @@ var smartFindOverlay =
         if (data == "enabled") {
             var enabled = this.mPrefs.getBoolPref(data);
 
-            this.findSimilarLevel.disabled = !enabled;
+            //this.findSimilarLevel.disabled = !enabled;
             this.findSimilar.checked = enabled;
             this.findMatchCase.disabled = enabled;
         }
-        else
-            if (data == "similarity_level") {
-                this.findSimilarLevel.value = this.mPrefs.getIntPref(data);
-            }
+        //else
+            //if (data == "similarity_level") {
+            //    this.findSimilarLevel.value = this.mPrefs.getIntPref(data);
+            //}
     },
 
     onLoad: function() {
         this.strings = document.getElementById("smartfind-strings");
 
         this.findSimilar = gFindBar.getElement("find-similar");
-        this.findSimilarLevel = gFindBar.getElement("find-similar-level");
+        //this.findSimilarLevel = gFindBar.getElement("find-similar-level");
         this.findMatchCase = gFindBar.getElement("find-case-sensitive");
 
         this.mPrefs = Components.classes["@mozilla.org/preferences-service;1"]
@@ -70,10 +70,41 @@ var smartFindOverlay =
 
         this.findMatchCase.disabled = enabled;
         this.findSimilar.checked = enabled;
-        this.findSimilarLevel.disabled = !enabled;
-        this.findSimilarLevel.value = this.mPrefs.getIntPref("similarity_level");
+        //this.findSimilarLevel.disabled = !enabled;
+        //this.findSimilarLevel.value = this.mPrefs.getIntPref("similarity_level");
 
         gFindBar.onFindCommand();
+    },
+
+    displaySimilarityMenu: function() {
+
+        var level = this.mPrefs.getIntPref("similarity_level");
+        dump ("displaySimilarityMenu " + level + " \n");
+        if (level >= 25 && level < 50)
+            document.getElementById("smartfind-menu-low").setAttribute("checked", true);
+        else if (level >= 50 && level < 80)
+            document.getElementById("smartfind-menu-medium").setAttribute("checked", true);
+        else
+            document.getElementById("smartfind-menu-high").setAttribute("checked", true);
+    },
+
+    displaySimilarityMenuChange: function(menuitem) {
+
+        var level = this.mPrefs.getIntPref("similarity_level");
+        switch (menuitem) {
+            case 1: // > 25
+                level = 25;
+                break;
+            case 2: // > 50
+                level = 50;
+                break;
+            case 3: // > 80
+                level = 80;
+                break;
+            default:
+                break;
+        }
+        this.mPrefs.setIntPref("similarity_level", level);
     },
 };
 

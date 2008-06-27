@@ -49,4 +49,19 @@
     <commandset id="mainCommandSet">
         <command id="cmd_find" oncommand="smartFindOverlay.openFindBar()"/>
     </commandset>
+
+    <menupopup id="menu_EditPopup">
+        <menu id="smartfind-menu" label="&smartfindSimilarMenu.label;" insertbefore="textfieldDirection-separator" accesskey="&smartfindSimilarMenu.key;">
+            <menupopup id="smartfind-popup-menu" onpopupshowing="smartFindOverlay.displaySimilarityMenu()">
+                <menuitem id="smartfind-menu-low" label="&smartfindMenuItemLow.label;" type="radio" accesskey="&smartfindMenuItemLow.key;" oncommand="smartFindOverlay.displaySimilarityMenuChange(1)"/>
+                <menuitem id="smartfind-menu-medium" label="&smartfindMenuItemMedium.label;" type="radio" accesskey="&smartfindMenuItemMedium.key;" oncommand="smartFindOverlay.displaySimilarityMenuChange(2)"/>
+                <menuitem id="smartfind-menu-high" label="&smartfindMenuItemHigh.label;" type="radio" accesskey="&smartfindMenuItemHigh.key;" oncommand="smartFindOverlay.displaySimilarityMenuChange(3)"/>
+            </menupopup>
+        </menu>
+    </menupopup>
 </overlay>
+
+
+
+
+

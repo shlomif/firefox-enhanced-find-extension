@@ -105,12 +105,6 @@
                 oncommand="_setSimilar(this.checked)"
                 label="&smartfindSimilarCheckbox.label;"
                 accesskey="&smartfindSimilarCheckbox.accesskey;"/>
-            <xul:textbox anonid="find-similar-level"
-                type="number"
-                size="2"
-                min="0" max="100"
-                oncommand="_setSimilarLevel(this.value)"
-                increment="5"/>
             <xul:label anonid="match-case-status" class="findbar-find-fast"/>
             <xul:image anonid="find-status-icon" class="findbar-find-fast find-status-icon"/>
             <xul:description anonid="find-status" class="findbar-find-fast findbar-find-status"
@@ -193,13 +187,85 @@
 
                     if (res == this.nsITypeAheadFind.FIND_NOTFOUND) {
                         if (this.open()) {
-                        if (this._findMode != this.FIND_NORMAL)
-                            this._setFindCloseTimeout();
-                        this._findField.focus();
-                        this._findField.focus();
-                        this._updateStatusUI(res, aFindPrevious);
+                            if (this._findMode != this.FIND_NORMAL)
+                                this._setFindCloseTimeout();
+                            this._findField.focus();
+                            this._findField.focus();
+                            //this._updateStatusUI(res, aFindPrevious);
                         }
                     }
+                ]]></body>
+            </method>
+            <method name="_updateStatusUI">
+                <parameter name="res"/>
+                <parameter name="aFindPrevious"/>
+                <body><![CDATA[
+                               switch (res) {
+                               case this.nsITypeAheadFind.FIND_WRAPPED:
+                               this._findStatusIcon.setAttribute("status", "wrapped");
+                               this._findStatusDesc.textContent =
+                               aFindPrevious ? this._wrappedToBottomStr : this._wrappedToTopStr;
+                               this._findField.removeAttribute("status");
+                               break;
+                               case this.nsITypeAheadFind.FIND_NOTFOUND:
+                               this._findStatusIcon.setAttribute("status", "notfound");
+                               //this._findStatusDesc.textContent = this._notFoundStr + "." +
+                               //                                   this._adviceSimilarySearchStr;
+                               this._findStatusDesc.textContent = this._adviceSimilarySearchStr;
+                               this._findField.setAttribute("status", "notfound");
+                               break;
+                               case this.nsITypeAheadFind.FIND_FOUND:
+                               default:
+                               this._findStatusIcon.removeAttribute("status");
+                               this._findStatusDesc.textContent = "";
+                               this._findField.removeAttribute("status");
+                               break;
+                               }
+                               ]]></body>
+            </method>
+
+
+            <method name="open">
+                <parameter name="aMode"/>
+                <body><![CDATA[
+                    if (aMode != undefined)
+                        this._findMode = aMode;
+
+                    if (!this._notFoundStr) {
+                        var stringsBundle =
+                            Components.classes["@mozilla.org/intl/stringbundle;1"]
+                            .getService(Components.interfaces.nsIStringBundleService)
+                            .createBundle("chrome://global/locale/findbar.properties");
+                        this._notFoundStr =
+                            stringsBundle.GetStringFromName("NotFound");
+                        this._wrappedToTopStr =
+                            stringsBundle.GetStringFromName("WrappedToTop");
+                        this._wrappedToBottomStr =
+                            stringsBundle.GetStringFromName("WrappedToBottom");
+                        this._normalFindStr =
+                            stringsBundle.GetStringFromName("NormalFindLabel");
+                        this._fastFindStr =
+                            stringsBundle.GetStringFromName("FastFindLabel");
+                        this._fastFindLinksStr =
+                            stringsBundle.GetStringFromName("FastFindLinksLabel");
+                        this._caseSensitiveStr =
+                            stringsBundle.GetStringFromName("CaseSensitive");
+                    }
+
+                    stringsBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                                    .getService(Components.interfaces.nsIStringBundleService)
+                                    .createBundle("chrome://smartfind/locale/smartfind.properties");
+
+                    this._adviceSimilarySearchStr=
+                        stringsBundle.GetStringFromName("EnterForSimilarity");
+
+                    this._updateFindUI();
+                    if (this.hidden) {
+                        this.hidden = false;
+                        this._updateStatusUI(this.nsITypeAheadFind.FIND_FOUND);
+                        return true;
+                    }
+                    return false;
                 ]]></body>
             </method>
         </implementation>
