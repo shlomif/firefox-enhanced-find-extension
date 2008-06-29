@@ -43,8 +43,8 @@
 
 function LevDistance(tofind, anyterm)
 {
-    this.toFind = tofind.toLowerCase();
-    this.anyTerm = anyterm.toLowerCase();
+    this.toFind = tofind;
+    this.anyTerm = anyterm;
     this.toFindLen = tofind.length;
     this.anyTermLen = anyterm.length;
 }
@@ -181,26 +181,36 @@ function getMostSimilarTerm(termList)
 function extractTextFromPage(doc)
 {
     var textStr = "";
+    var dictionary = new Array();
+    var retWords = new Array();
     var textNodes = doc.evaluate("//body//text()",
                                  doc, null,
                                  XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
     for (var i = 0; i < textNodes.snapshotLength; i++) {
         var node = textNodes.snapshotItem(i);
-        textStr += node.data;
+        textStr += node.data
     }
 
-    return textStr.split(/\s+/);
+    var tmpWords = textStr.split(/\s+/);
+    for (var i = 0; i < tmpWords.length; i += 1) {
+        dictionary[tmpWords[i].toLowerCase()] = 1;
+    }
+
+    for (var i in dictionary) {
+        retWords.push(i);
+    }
+
+    return retWords;
 }
 
 function getSimilarTerms(doc, q, t)
 {
-    var scoreTmp = 0.0;
+    var scoreTmp = 0.0, mostSimilarScr = 0.0, mostSimilarStr = "";
     var termList = new Array();
     var textSplitList = extractTextFromPage(doc);
     var treshold = parseFloat(parseInt(t)/100);
     var i, levDistance;
-
     var smallwords = 0;
 
     for (i = 0; i < textSplitList.length; i++) {
@@ -217,8 +227,12 @@ function getSimilarTerms(doc, q, t)
         if (scoreTmp >= treshold) {
             var x = new TermScore(textSplitList[i], scoreTmp);
             termList.push(x);
+            if (scoreTmp > mostSimilarScr) {
+                mostSimilarStr = textSplitList[i];
+                mostSimilarScr = scoreTmp;
+            }
         }
     }
 
-    return getMostSimilarTerm(termList);
+    return mostSimilarStr;
 }
