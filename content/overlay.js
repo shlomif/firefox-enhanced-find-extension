@@ -40,17 +40,25 @@ var smartFindOverlay =
         if (data == "enabled") {
             var enabled = this.mPrefs.getBoolPref(data);
 
-            //this.findSimilarLevel.disabled = !enabled;
+            this.findSimilarLevel.disabled = !enabled;
             this.findSimilar.checked = enabled;
             this.findMatchCase.disabled = enabled;
         }
-        //else
-            //if (data == "similarity_level") {
-            //    this.findSimilarLevel.value = this.mPrefs.getIntPref(data);
-            //}
+        else
+            if (data == "similarity_level") {
+                //this.findSimilarLevel.value = this.mPrefs.getIntPref(data);
+
+                // FIXME: tomaz, do you agree with this method call ?
+                gFindBar._setSimilarLevel(this.mPrefs.getIntPref(data));
+            }
     },
 
     onLoad: function() {
+
+        this.HIGH = 80;
+        this.MEDIUM = 50;
+        this.LOW = 30;
+
         this.strings = document.getElementById("smartfind-strings");
 
         this.findSimilar = gFindBar.getElement("find-similar");
@@ -58,9 +66,9 @@ var smartFindOverlay =
         this.findMatchCase = gFindBar.getElement("find-case-sensitive");
 
         this.mPrefs = Components.classes["@mozilla.org/preferences-service;1"]
-            .getService(Components.interfaces.nsIPrefService)
-            .getBranch("extensions.smartfind.")
-            .QueryInterface(Components.interfaces.nsIPrefBranch2);
+                .getService(Components.interfaces.nsIPrefService)
+                .getBranch("extensions.smartfind.")
+                .QueryInterface(Components.interfaces.nsIPrefBranch2);
 
         this.mPrefs.addObserver("", this, false);
     },
@@ -79,33 +87,23 @@ var smartFindOverlay =
     displaySimilarityMenu: function() {
 
         var level = this.mPrefs.getIntPref("similarity_level");
-        dump ("displaySimilarityMenu " + level + " \n");
-        if (level >= 25 && level < 50)
-            document.getElementById("smartfind-menu-low").setAttribute("checked", true);
-        else if (level >= 50 && level < 80)
-            document.getElementById("smartfind-menu-medium").setAttribute("checked", true);
-        else
+
+        if (level >= this.HIGH) // 80
             document.getElementById("smartfind-menu-high").setAttribute("checked", true);
+        else if (level >= this.MEDIUM) // 50
+            document.getElementById("smartfind-menu-medium").setAttribute("checked", true);
+        else // 30
+            document.getElementById("smartfind-menu-low").setAttribute("checked", true);
     },
 
-    displaySimilarityMenuChange: function(menuitem) {
+    displaySimilarityMenuChange: function(value) {
 
-        var level = this.mPrefs.getIntPref("similarity_level");
-        switch (menuitem) {
-            case 1: // > 25
-                level = 25;
-                break;
-            case 2: // > 50
-                level = 50;
-                break;
-            case 3: // > 80
-                level = 80;
-                break;
-            default:
-                break;
-        }
-        this.mPrefs.setIntPref("similarity_level", level);
+        // FIXME: tomaz, do you agree with this method call ?
+        this.mPrefs.setIntPref("similarity_level", value);
+
+        gFindBar._setSimilarLevel(value);
     },
+
 };
 
 window.addEventListener("load", function(e) { smartFindOverlay.onLoad(e); }, false);

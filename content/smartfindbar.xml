@@ -200,28 +200,28 @@
                 <parameter name="res"/>
                 <parameter name="aFindPrevious"/>
                 <body><![CDATA[
-                               switch (res) {
-                               case this.nsITypeAheadFind.FIND_WRAPPED:
-                               this._findStatusIcon.setAttribute("status", "wrapped");
-                               this._findStatusDesc.textContent =
-                               aFindPrevious ? this._wrappedToBottomStr : this._wrappedToTopStr;
-                               this._findField.removeAttribute("status");
-                               break;
-                               case this.nsITypeAheadFind.FIND_NOTFOUND:
-                               this._findStatusIcon.setAttribute("status", "notfound");
-                               //this._findStatusDesc.textContent = this._notFoundStr + "." +
-                               //                                   this._adviceSimilarySearchStr;
-                               this._findStatusDesc.textContent = this._adviceSimilarySearchStr;
-                               this._findField.setAttribute("status", "notfound");
-                               break;
-                               case this.nsITypeAheadFind.FIND_FOUND:
-                               default:
-                               this._findStatusIcon.removeAttribute("status");
-                               this._findStatusDesc.textContent = "";
-                               this._findField.removeAttribute("status");
-                               break;
-                               }
-                               ]]></body>
+                    switch (res) {
+                        case this.nsITypeAheadFind.FIND_WRAPPED:
+                            this._findStatusIcon.setAttribute("status", "wrapped");
+                            this._findStatusDesc.textContent =
+                            aFindPrevious ? this._wrappedToBottomStr : this._wrappedToTopStr;
+                            this._findField.removeAttribute("status");
+                            break;
+                        case this.nsITypeAheadFind.FIND_NOTFOUND:
+                            this._findStatusIcon.setAttribute("status", "notfound");
+                            //this._findStatusDesc.textContent = this._notFoundStr + "." +
+                            //this._adviceSimilarySearchStr;
+                            this._findStatusDesc.textContent = this._adviceSimilarySearchStr;
+                            this._findField.setAttribute("status", "notfound");
+                            break;
+                        case this.nsITypeAheadFind.FIND_FOUND:
+                        default:
+                        this._findStatusIcon.removeAttribute("status");
+                            this._findStatusDesc.textContent = "";
+                            this._findField.removeAttribute("status");
+                            break;
+                    }
+                ]]></body>
             </method>
 
 

@@ -194,6 +194,23 @@ function extractTextFromPage(doc)
 
     var tmpWords = textStr.split(/\s+/);
     for (var i = 0; i < tmpWords.length; i += 1) {
+
+        // Remove unwanted characters from our "text string". That is the big list:
+        // ^&!@*(){},."':;?[]#%+-=<>`_~
+
+        //FIXME: Currently, we are removing the characteres in tree steps: first, from the begin,
+        // second from the end and at least from the middle. In the first two, we replace by "",
+        // and later replaces it by " ". Could all that be handled at once.
+
+        // removing from the end
+        tmpWords[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+$/, "");
+
+        // removing from the begining
+        tmpWords[i] = tmpWords[i].replace(/^[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]]+/, "");
+
+        // removing from the middle
+        // textSplitList[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+/, " ");
+
         dictionary[tmpWords[i].toLowerCase()] = 1;
     }
 
@@ -217,9 +234,6 @@ function getSimilarTerms(doc, q, t)
         // TBD: move the regexp to the split phrase.
         if (textSplitList[i].length < 3)
             continue;
-
-        textSplitList[i] = textSplitList[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+$/, "");
-        textSplitList[i] = textSplitList[i].replace(/^[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]]+/, "");
 
         levDistance = new LevDistance(q, textSplitList[i]);
         scoreTmp = levDistance.similarity();
