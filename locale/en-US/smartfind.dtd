@@ -1,0 +1,10 @@
+<!ENTITY smartfindSimilarCheckbox.label "Similar">
+<!ENTITY smartfindSimilarCheckbox.accesskey "s">
+<!ENTITY smartfindSimilarMenu.label "Find Similarity Level">
+<!ENTITY smartfindSimilarMenu.key "L">
+<!ENTITY smartfindMenuItemLow.label "Low">
+<!ENTITY smartfindMenuItemLow.key "L">
+<!ENTITY smartfindMenuItemMedium.label "Medium">
+<!ENTITY smartfindMenuItemMedium.key "M">
+<!ENTITY smartfindMenuItemHigh.label "High">
+<!ENTITY smartfindMenuItemHigh.key "H">
