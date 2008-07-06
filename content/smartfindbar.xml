@@ -49,6 +49,73 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
 
+    <binding id="smartfindbar-textbox"
+        extends="chrome://global/content/bindings/findbar.xml#findbar-textbox">
+
+        <implementation>
+            <method name="_handleEnter">
+                <parameter name="aEvent"/>
+                <body><![CDATA[
+                    if (this.findbar._findMode == this.findbar.FIND_NORMAL) {
+                        var findString = this.findbar._findField;
+                        if (!findString.value)
+                            return;
+                        if (aEvent.ctrlKey) {
+                            this.findbar.getElement("highlight").click();
+                            return;
+                        }
+                        this.findbar.onFindAgainCommand(aEvent.shiftKey);
+                    }
+                    else {
+                        // We need to keep a reference to _foundLink because
+                        // _finishFAYT resets it to null.
+                        var tmpLink = this._findbar._foundLink;
+                        if (tmpLink && this.findbar._finishFAYT(aEvent))
+                            this.findbar._dispatchKeypressEvent(tmpLink, aEvent);
+
+                        // Add <ENTER> support for similatiry search if in QUICK SEARCH mode
+                        this.findbar.onFindAgainCommand(aEvent.shiftKey);
+                    }
+                ]]></body>
+            </method>
+        </implementation>
+
+        <handlers>
+            <handler event="keypress">
+                <![CDATA[
+                    var win = this.findbar._currentWindow ||
+                         this.findbar.browser.contentWindow;
+
+                    switch (event.keyCode) {
+                    case KeyEvent.DOM_VK_RETURN:
+                        this._handleEnter(event);
+                        event.preventDefault();
+                        event.stopPropagation();
+                        break;
+                    case KeyEvent.DOM_VK_TAB:
+                        this._handleTab(event);
+                        break;
+                    case KeyEvent.DOM_VK_PAGE_UP:
+                        win.scrollByPages(-1);
+                        event.preventDefault();
+                        break;
+                    case KeyEvent.DOM_VK_PAGE_DOWN:
+                        win.scrollByPages(1);
+                        event.preventDefault();
+                        break;
+                    case KeyEvent.DOM_VK_UP:
+                        win.scrollByLines(-1);
+                        event.preventDefault();
+                        break;
+                    case KeyEvent.DOM_VK_DOWN:
+                        win.scrollByLines(1);
+                        event.preventDefault();
+                        break;
+
+            ]]></handler>
+        </handlers>
+    </binding>
+
     <binding id="smartfindbar"
         extends="chrome://global/content/bindings/findbar.xml#findbar">
 
@@ -65,7 +132,7 @@
                 <xul:label anonid="find-label" class="findbar-find-fast" control="findbar-textbox"/>
                 <xul:hbox anonid="find-field-container"
                     class="find-field-container findbar-find-fast">
-                <xul:textbox class="findbar-textbox" anonid="findbar-textbox"/>
+                <xul:textbox class="findbar-textbox" anonid="findbar-textbox" oncommand="onFindAgainCommand(false);"/>
             </xul:hbox>
             <xul:hbox anonid="find-buttons-container" class="find-buttons-container">
                 <xul:toolbarbutton anonid="find-next"
@@ -116,11 +183,48 @@
         <implementation implements="nsIDOMEventListener">
 
             <constructor><![CDATA[
-                var prefsvc = Components.classes["@mozilla.org/preferences-service;1"]
-                    .getService(Components.interfaces.nsIPrefBranch2);
+                // These elements are accessed frequently and are therefore cached
+                this._findField = this.getElement("findbar-textbox");
+                this._findStatusIcon = this.getElement("find-status-icon");
+                this._findStatusDesc = this.getElement("find-status");
 
-                this._similar = prefsvc.getBoolPref("extensions.smartfind.enabled");
-                this._similarLevel = prefsvc.getIntPref("extensions.smartfind.similarity_level");
+                var prefsvc =
+                Components.classes["@mozilla.org/preferences-service;1"]
+                            .getService(Components.interfaces.nsIPrefBranch2);
+
+                this._quickFindTimeoutLength =
+                    prefsvc.getIntPref("accessibility.typeaheadfind.timeout");
+                this._flashFindBar =
+                prefsvc.getIntPref("accessibility.typeaheadfind.flashBar");
+
+                prefsvc.addObserver("accessibility.typeaheadfind",
+                                    this._observer, false);
+                prefsvc.addObserver("accessibility.typeaheadfind.linksonly",
+                                    this._observer, false);
+                prefsvc.addObserver("accessibility.typeaheadfind.casesensitive",
+                                    this._observer, false);
+
+                this._useTypeAheadFind =
+                    prefsvc.getBoolPref("accessibility.typeaheadfind");
+                this._typeAheadLinksOnly =
+                    prefsvc.getBoolPref("accessibility.typeaheadfind.linksonly");
+                this._typeAheadCaseSensitive =
+                    prefsvc.getIntPref("accessibility.typeaheadfind.casesensitive");
+
+                // similarity
+                this._similar =
+                    prefsvc.getBoolPref("extensions.smartfind.enabled");
+                this._similarLevel =
+                    prefsvc.getIntPref("extensions.smartfind.similarity_level");
+
+                // Convenience
+                this.nsITypeAheadFind = Components.interfaces.nsITypeAheadFind;
+                this.nsISelectionController = Components.interfaces.nsISelectionController;
+
+                // Make sure the FAYT keypress listener is attached by initializing the
+                // browser property
+                setTimeout(function(aSelf) { aSelf.browser = aSelf.browser; }, 0, this);
+
             ]]></constructor>
 
             <method name="_setSimilar">

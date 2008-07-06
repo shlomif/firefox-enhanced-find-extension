@@ -4,6 +4,13 @@ findbar {
   -moz-binding: url("chrome://smartfind/content/smartfindbar.xml#smartfindbar") !important;
 }
 
+.findbar-textbox {
+    -moz-binding: url("chrome://smartfind/content/smartfindbar.xml#smartfindbar-textbox") !important;
+    -moz-appearance: none;
+    border: none;
+    margin: 0;
+}
+
 .findbar-textbox[status="foundsimilar"] {
   background-color: #2cb7b9;
   color: #FFFFFF;
