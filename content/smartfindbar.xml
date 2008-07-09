@@ -87,31 +87,31 @@
                          this.findbar.browser.contentWindow;
 
                     switch (event.keyCode) {
-                    case KeyEvent.DOM_VK_RETURN:
-                        this._handleEnter(event);
-                        event.preventDefault();
-                        event.stopPropagation();
-                        break;
-                    case KeyEvent.DOM_VK_TAB:
-                        this._handleTab(event);
-                        break;
-                    case KeyEvent.DOM_VK_PAGE_UP:
-                        win.scrollByPages(-1);
-                        event.preventDefault();
-                        break;
-                    case KeyEvent.DOM_VK_PAGE_DOWN:
-                        win.scrollByPages(1);
-                        event.preventDefault();
-                        break;
-                    case KeyEvent.DOM_VK_UP:
-                        win.scrollByLines(-1);
-                        event.preventDefault();
-                        break;
-                    case KeyEvent.DOM_VK_DOWN:
-                        win.scrollByLines(1);
-                        event.preventDefault();
-                        break;
-
+                        case KeyEvent.DOM_VK_RETURN:
+                            this._handleEnter(event);
+                            event.preventDefault();
+                            event.stopPropagation();
+                            break;
+                        case KeyEvent.DOM_VK_TAB:
+                            this._handleTab(event);
+                            break;
+                        case KeyEvent.DOM_VK_PAGE_UP:
+                            win.scrollByPages(-1);
+                            event.preventDefault();
+                            break;
+                        case KeyEvent.DOM_VK_PAGE_DOWN:
+                            win.scrollByPages(1);
+                            event.preventDefault();
+                            break;
+                        case KeyEvent.DOM_VK_UP:
+                            win.scrollByLines(-1);
+                            event.preventDefault();
+                            break;
+                        case KeyEvent.DOM_VK_DOWN:
+                            win.scrollByLines(1);
+                            event.preventDefault();
+                            break;
+                    }
             ]]></handler>
         </handlers>
     </binding>

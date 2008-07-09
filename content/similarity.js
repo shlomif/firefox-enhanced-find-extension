@@ -192,7 +192,9 @@ function extractTextFromPage(doc)
         textStr += node.data
     }
 
-    var tmpWords = textStr.split(/\s+/);
+    //var tmpWords = textStr.split(/\s+/);
+    var tmpWords = textStr.split(/[\s|\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\/|\#]+/);
+
     for (var i = 0; i < tmpWords.length; i += 1) {
 
         // Remove unwanted characters from our "text string". That is the big list:
@@ -203,10 +205,12 @@ function extractTextFromPage(doc)
         // and later replaces it by " ". Could all that be handled at once.
 
         // removing from the end
-        tmpWords[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+$/, "");
+        tmpWords[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\#|\/]+$/, "");
 
         // removing from the begining
-        tmpWords[i] = tmpWords[i].replace(/^[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]]+/, "");
+        tmpWords[i] = tmpWords[i].replace(/^[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]|\#|\/]+/, "");
+
+        dump(""+tmpWords[i]+"\n");
 
         // removing from the middle
         // textSplitList[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+/, " ");
