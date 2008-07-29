@@ -63,13 +63,13 @@ LevDistance.prototype.minValue = function(a, b, c)
 
 LevDistance.prototype.distance = function()
 {
-    var n; // length of s
-    var m; // length of t
-    var i; // iterates through s
-    var j; // iterates through t
-    var s_i; // ith character of s
-    var t_j; // jth character of t
-    var cost; // cost
+    var n; // length of toFind
+    var m; // length of anyTerm
+    var i; // iterates through toFind
+    var j; // iterates through anyTerm
+    var s_i; // ith character of toFind
+    var t_j; // jth character of anyTerm
+    var cost; // cost do edit
     var s = this.toFind;
     var t = this.anyTerm;
 
@@ -90,27 +90,19 @@ LevDistance.prototype.distance = function()
     for (i = 0; i <= n; i++) {
         for (j = 0; j <= m; j++) {
             d[i][j] = 0;
+            d[0][j] = j;
         }
-    }
-
-    for (i = 0; i <= n; i++) {
         d[i][0] = i;
     }
 
-    for (j = 0; j <= m; j++) {
-        d[0][j] = j;
-    }
-
-    for (i = 1; i <= n; i++) {
+   for (i = 1; i <= n; i++) {
         var s_i = s.charAt(i - 1);
 
         for (j = 1; j <= m; j++) {
             var t_j = t.charAt(j - 1);
-
+            cost = 1
             if (s_i == t_j) {
                 cost = 0;
-            } else {
-                cost = 1;
             }
 
             d[i][j] = this.minValue(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + cost);
