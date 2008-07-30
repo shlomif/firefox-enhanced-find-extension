@@ -75,6 +75,8 @@
 
                         // Add <ENTER> support for similatiry search if in QUICK SEARCH mode
                         this.findbar.onFindAgainCommand(aEvent.shiftKey);
+                        aEvent.preventDefault();
+                        aEvent.stopPropagation();
                     }
                 ]]></body>
             </method>
@@ -88,9 +90,9 @@
 
                     switch (event.keyCode) {
                         case KeyEvent.DOM_VK_RETURN:
-                            this._handleEnter(event);
-                            event.preventDefault();
-                            event.stopPropagation();
+                            //this._handleEnter(event);
+                            //event.preventDefault();
+                            //event.stopPropagation();
                             break;
                         case KeyEvent.DOM_VK_TAB:
                             this._handleTab(event);

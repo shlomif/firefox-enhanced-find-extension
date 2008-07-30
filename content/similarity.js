@@ -202,8 +202,6 @@ function extractTextFromPage(doc)
         // removing from the begining
         tmpWords[i] = tmpWords[i].replace(/^[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]|\#|\/]+/, "");
 
-        dump(""+tmpWords[i]+"\n");
-
         // removing from the middle
         // textSplitList[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+/, " ");
 
