@@ -235,9 +235,8 @@
                     var prefsvc = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch2);
 
-                    prefsvc.setBoolPref("extensions.smartfind.enabled",
-                        aSimilar ? true : false);
-                        this._similar = aSimilar;
+                    prefsvc.setBoolPref("extensions.smartfind.enabled", aSimilar ? true : false);
+                    this._similar = aSimilar;
                 ]]></body>
             </method>
 
@@ -247,8 +246,7 @@
                     var prefsvc = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch2);
 
-                    prefsvc.setIntPref("extensions.smartfind.similarity_level",
-                        aValue);
+                    prefsvc.setIntPref("extensions.smartfind.similarity_level", aValue);
                     this._similarLevel = aValue;
                 ]]></body>
             </method>
@@ -261,7 +259,6 @@
                         .loadSubScript("chrome://smartfind/content/similarity.js");
 
                     var findString = this._browser.fastFind.searchString || this._findField.value;
-
                     if (!findString) {
                         this.startFind();
                         return;
@@ -269,7 +266,6 @@
 
                     var res;
                     // Ensure the stored SearchString is in sync with what we want to find
-
                     if (this._findField.value != this._browser.fastFind.searchString &&
                         !this.hidden) {
                         res = this._find(this._findField.value);
@@ -297,7 +293,8 @@
                                 this._setFindCloseTimeout();
                             this._findField.focus();
                             this._findField.focus();
-                            //this._updateStatusUI(res, aFindPrevious);
+                            if (!this._similar)
+                                this._updateStatusUI(res, aFindPrevious);
                         }
                     }
                 ]]></body>
@@ -310,14 +307,15 @@
                         case this.nsITypeAheadFind.FIND_WRAPPED:
                             this._findStatusIcon.setAttribute("status", "wrapped");
                             this._findStatusDesc.textContent =
-                            aFindPrevious ? this._wrappedToBottomStr : this._wrappedToTopStr;
+                              aFindPrevious ? this._wrappedToBottomStr : this._wrappedToTopStr;
                             this._findField.removeAttribute("status");
                             break;
                         case this.nsITypeAheadFind.FIND_NOTFOUND:
                             this._findStatusIcon.setAttribute("status", "notfound");
-                            //this._findStatusDesc.textContent = this._notFoundStr + "." +
-                            //this._adviceSimilarySearchStr;
-                            this._findStatusDesc.textContent = this._adviceSimilarySearchStr;
+                            if (this._similar)
+                              this._findStatusDesc.textContent = this._adviceSimilarySearchStr;
+                            else
+                              this._findStatusDesc.textContent = this._notFoundStr;
                             this._findField.setAttribute("status", "notfound");
                             break;
                         case this.nsITypeAheadFind.FIND_FOUND:

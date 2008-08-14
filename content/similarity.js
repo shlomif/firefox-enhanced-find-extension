@@ -175,7 +175,9 @@ function extractTextFromPage(doc)
     var textStr = "";
     var dictionary = new Array();
     var retWords = new Array();
-    var textNodes = doc.evaluate("//body//text()",
+
+    //var textNodes = doc.evaluate("//body//text()",
+    var textNodes = doc.evaluate("//text()",
                                  doc, null,
                                  XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
@@ -185,7 +187,7 @@ function extractTextFromPage(doc)
     }
 
     //var tmpWords = textStr.split(/\s+/);
-    var tmpWords = textStr.split(/[\s|\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\/|\#]+/);
+    var tmpWords = textStr.split(/[\s|\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\/|\#|/\n]+/);
 
     for (var i = 0; i < tmpWords.length; i += 1) {
 
