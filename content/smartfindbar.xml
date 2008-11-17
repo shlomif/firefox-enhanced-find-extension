@@ -251,6 +251,31 @@
                 ]]></body>
             </method>
 
+            <method name="_find">
+                <parameter name="aValue"/>
+                <body><![CDATA[
+                var val = aValue || this._findField.value
+
+                this._enableFindButtons(val);
+                if (this.getElement("highlight").checked)
+                    this._setHighlightTimeout();
+
+                this._updateCaseSensitivity(val);
+
+                var fastFind = this.browser.fastFind;
+                var res = fastFind.find(val, this._findMode == this.FIND_LINKS);
+                this._updateFoundLink(res);
+                if(this._similar)
+                    this._noSimilar = false;
+                this._updateStatusUI(res, false);
+
+                if (this._findMode != this.FIND_NORMAL)
+                    this._setFindCloseTimeout();
+
+                return res;
+                ]]></body>
+            </method>
+
             <method name="onFindAgainCommand">
                 <parameter name="aFindPrevious"/>
                 <body><![CDATA[
@@ -277,13 +302,22 @@
                             findString = getSimilarTerms(this.browser.contentWindow.document,
                                 this._browser.fastFind.searchString, this._similarLevel);
 
-                            res = this._find(findString);
+                            if (findString != "") {
+                                res = this._find(findString);
 
-                            // Change entry background color when finding similar word
-                            this._findField.setAttribute("status", "foundsimilar");
+                                // Change entry background color when finding similar word
+                                this._findField.setAttribute("status", "foundsimilar");
 
-                            // Set findbar entry and SearchString to be the similar string found.
-                            this._findField.value = findString;
+                                // Set findbar entry and SearchString to be the similar string found.
+                                this._findField.value = findString;
+                                this._noSimilar = false;
+                            }
+                            else { // no similar term found !
+                                if (!this._noSimilar) {
+                                    this._noSimilar = true;
+                                    this._updateStatusUI(res, aFindPrevious);
+                                }
+                            }
                         }
                     }
 
@@ -313,7 +347,10 @@
                         case this.nsITypeAheadFind.FIND_NOTFOUND:
                             this._findStatusIcon.setAttribute("status", "notfound");
                             if (this._similar)
-                              this._findStatusDesc.textContent = this._adviceSimilarySearchStr;
+                                if(this._noSimilar)
+                                    this._findStatusDesc.textContent = this._notSimilarySearchStr;
+                                else
+                                    this._findStatusDesc.textContent = this._adviceSimilarySearchStr;
                             else
                               this._findStatusDesc.textContent = this._notFoundStr;
                             this._findField.setAttribute("status", "notfound");
@@ -362,6 +399,9 @@
 
                     this._adviceSimilarySearchStr=
                         stringsBundle.GetStringFromName("EnterForSimilarity");
+
+                    this._notSimilarySearchStr=
+                        stringsBundle.GetStringFromName("NoSimilar");
 
                     this._updateFindUI();
                     if (this.hidden) {

@@ -176,17 +176,94 @@ function extractTextFromPage(doc)
     var dictionary = new Array();
     var retWords = new Array();
 
-    //var textNodes = doc.evaluate("//body//text()",
-    var textNodes = doc.evaluate("//text()",
-                                 doc, null,
-                                 XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    // FIXME: This filter is still problematic when we have something like:
+    // <script>
+    //      <dammit>
+    //              any crappy text.
+    //      </dammit>
+    // </script>
+    var filter = {
+        acceptNode : function acceptNode(node) {
+            if (node.parentNode.nodeName.toLowerCase() != 'script' &&
+                node.parentNode.nodeName.toLowerCase() != 'style'  &&
+                node.parentNode.nodeName.toLowerCase() != 'meta'   &&
+                node.parentNode.nodeName.toLowerCase() != 'object' &&
+                node.parentNode.nodeName.toLowerCase() != 'embed'  &&
+                node.parentNode.nodeName.toLowerCase() != 'noscript') {
+
+                // verify if our #text if made only by white spaces
+                var tmpStr = node.data.replace(/(^\s*)|(\s*$)/g, "");
+                if (tmpStr != "\n" && tmpStr != "") {
+                    textStr += tmpStr + " ";
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+                return NodeFilter.FILTER_SKIP;
+            }
+            return NodeFilter.FILTER_SKIP;
+        }
+    };
+
+    // DEBUG
+    // var start = Date.now();
+
+    var walker = doc.createTreeWalker(doc.documentElement,
+                                      NodeFilter.SHOW_TEXT,
+                                      filter,
+                                      false);
+    while (walker.nextNode()) {
+      textStr += walker.currentNode.data + " ";
+    }
+
+    // DEBUG
+    // var end = Date.now();
+    // var elapsed = end - start; // time in milliseconds
+    // dump(elapsed/1000 + "\n\n");
+
+    /*************************************************
+    NOTE: @tonikitoo: I got to admit that I tried hard to find a good XPATH expression for
+          what we need at this point (get text content from all nodes but not some irrelevant
+          ones from a search point of view), however none of attempts went fine enough for my
+          criteria.
+          For reference, I am leaving some below, in case we want to tried the XPATH approach
+          later on */
+
+    // var textNodes = doc.evaluate("//*[not(contains(@type , 'text/css') or contains(@type, 'text/javascript')]//text()",
+
+    // var textNodes = doc.evaluate("//*[not(contains(@type , 'text/css')) or not(contains(@type, 'text/javascript'))]//text()",
+
+    // var textNodes = doc.evaluate("//*[local-name()!='script']/text()",
+
+    // var textNodes = doc.evaluate("//*[not(local-name()='script') and not(local-name()='object') and not(local-name()='embed') and not(local-name()='meta') and not(local-name()='style')]//text()",
+
+    // var textNodes = doc.evaluate("//body/following-sibling::*[not(name()='style')] |
+                                     //body/following-sibling::*[not(name()='script')] |
+                                     //head/following-sibling::*[not(name()='style')] |
+                                     //head/following-sibling::*[not(name()='script')]//text()",
+
+    //var textNodes = doc.evaluate("/*/descendant::*[not(self::style)]//text()",
+
+    //var textNodes = doc.evaluate("//*[. != 'STYLE'] //text()",
+
+    // var textNodes = doc.evaluate("//*[(@type = 'text/css' or @type = 'text/javascript')] //text()",
+
+    // var textNodes = doc.evaluate("//*[not(node()='SCRIPT') and not(node()='STYLE')]//text()",
+
+    /* the end !!*/
+
+    // NOTE: code we used to use at 0.1 time.
+    // var textNodes = doc.evaluate("//body//text()",
+    /*textNodes = doc.evaluate("//text()",
+                                doc, null,
+                                XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
     for (var i = 0; i < textNodes.snapshotLength; i++) {
         var node = textNodes.snapshotItem(i);
         textStr += node.data
     }
 
-    //var tmpWords = textStr.split(/\s+/);
+    var tmpWords = textStr.split(/\s+/);
+    */
+
     var tmpWords = textStr.split(/[\s|\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\/|\#|/\n]+/);
 
     for (var i = 0; i < tmpWords.length; i += 1) {
@@ -196,7 +273,7 @@ function extractTextFromPage(doc)
 
         //FIXME: Currently, we are removing the characteres in tree steps: first, from the begin,
         // second from the end and at least from the middle. In the first two, we replace by "",
-        // and later replaces it by " ". Could all that be handled at once.
+        // and later replaces it by " ". Could all that be handled at once ?
 
         // removing from the end
         tmpWords[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\#|\/]+$/, "");
@@ -210,6 +287,7 @@ function extractTextFromPage(doc)
         dictionary[tmpWords[i].toLowerCase()] = 1;
     }
 
+    // FIXME: And then adding to dic ... gotta optimize this.
     for (var i in dictionary) {
         retWords.push(i);
     }

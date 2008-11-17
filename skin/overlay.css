@@ -14,4 +14,8 @@ findbar {
 .findbar-textbox[status="foundsimilar"] {
   background-color: #2cb7b9;
   color: #FFFFFF;
+  -moz-border-top-colors: #5F5F5F #2CB7B9 #2CB7B9;
+  -moz-border-bottom-colors: #9F9F9F #2CB7B9 #2CB7B9;
+  -moz-border-right-colors: #7F7F7F #2CB7B9 #2CB7B9;
+  -moz-border-left-colors: #7F7F7F #2CB7B9 #2CB7B9;
 }
