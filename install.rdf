@@ -4,7 +4,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>smartfind@smartfind.org</em:id>
     <em:name>Smart Find</em:name>
-    <em:version>0.1</em:version>
+    <em:version>0.2.1</em:version>
     <em:type>2</em:type>
     <em:creator>Roberto Oliveira dos Santos</em:creator>
     <em:contributor>Roberto Oliveira do Santos</em:contributor>

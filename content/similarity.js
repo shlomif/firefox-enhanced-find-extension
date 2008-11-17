@@ -52,10 +52,10 @@ function LevDistance(tofind, anyterm)
 LevDistance.prototype.minValue = function(a, b, c)
 {
     var mi = parseInt(a);
-    if (parseInt(b) < mi) {
+    if(parseInt(b) < mi) {
         mi = parseInt(b);
     }
-    if (parseInt(c) < mi) {
+    if(parseInt(c) < mi) {
         mi = parseInt(c);
     }
     return mi;
@@ -79,29 +79,29 @@ LevDistance.prototype.distance = function()
 
     var d = new Array(n+1);
 
-    if (n == 0) { return m; }
-    if (m == 0) { return n; }
+    if(n == 0) { return m; }
+    if(m == 0) { return n; }
 
     for(i = 0; i < n+1; i++) {
         var tmp = new Array(m+1);
         d[i] = tmp;
     }
 
-    for (i = 0; i <= n; i++) {
-        for (j = 0; j <= m; j++) {
+    for(i = 0; i <= n; i++) {
+        for(j = 0; j <= m; j++) {
             d[i][j] = 0;
             d[0][j] = j;
         }
         d[i][0] = i;
     }
 
-   for (i = 1; i <= n; i++) {
+   for(i = 1; i <= n; i++) {
         var s_i = s.charAt(i - 1);
 
-        for (j = 1; j <= m; j++) {
+        for(j = 1; j <= m; j++) {
             var t_j = t.charAt(j - 1);
             cost = 1
-            if (s_i == t_j) {
+            if(s_i == t_j) {
                 cost = 0;
             }
 
@@ -163,18 +163,14 @@ function getMostSimilarTerm(termList)
     var mostSimilarTem = termList[0];
 
     for(i = 1; i < termList.length; i++) {
-        if (termList[i].getScore() > mostSimilarTem.getScore())
+        if(termList[i].getScore() > mostSimilarTem.getScore())
             mostSimilarTem = termList[i];
     }
 
     return mostSimilarTem.getTerm();
 }
 
-function extractTextFromPage(doc)
-{
-    var textStr = "";
-    var dictionary = new Array();
-    var retWords = new Array();
+function doExtract(doc) {
 
     // FIXME: This filter is still problematic when we have something like:
     // <script>
@@ -184,40 +180,54 @@ function extractTextFromPage(doc)
     // </script>
     var filter = {
         acceptNode : function acceptNode(node) {
-            if (node.parentNode.nodeName.toLowerCase() != 'script' &&
-                node.parentNode.nodeName.toLowerCase() != 'style'  &&
-                node.parentNode.nodeName.toLowerCase() != 'meta'   &&
-                node.parentNode.nodeName.toLowerCase() != 'object' &&
-                node.parentNode.nodeName.toLowerCase() != 'embed'  &&
-                node.parentNode.nodeName.toLowerCase() != 'noscript') {
-
+            if(node.parentNode.nodeName.toLowerCase() != 'script' &&
+            node.parentNode.nodeName.toLowerCase() != 'style'  &&
+            node.parentNode.nodeName.toLowerCase() != 'meta'   &&
+            node.parentNode.nodeName.toLowerCase() != 'object' &&
+            node.parentNode.nodeName.toLowerCase() != 'embed'  &&
+            node.parentNode.nodeName.toLowerCase() != 'noscript') {
                 // verify if our #text if made only by white spaces
                 var tmpStr = node.data.replace(/(^\s*)|(\s*$)/g, "");
-                if (tmpStr != "\n" && tmpStr != "") {
-                    textStr += tmpStr + " ";
+                if(tmpStr != "\n" && tmpStr != "") {
+                    accumStr += tmpStr + " ";
                     return NodeFilter.FILTER_ACCEPT;
                 }
-                return NodeFilter.FILTER_SKIP;
+                return NodeFilter.FILTER_REJECT;
             }
-            return NodeFilter.FILTER_SKIP;
+            return NodeFilter.FILTER_REJECT;
         }
     };
 
-    // DEBUG
-    // var start = Date.now();
-
+    var accumStr = "";
     var walker = doc.createTreeWalker(doc.documentElement,
                                       NodeFilter.SHOW_TEXT,
                                       filter,
                                       false);
-    while (walker.nextNode()) {
-      textStr += walker.currentNode.data + " ";
+    while (walker.nextNode()) { }
+
+    return accumStr;
+}
+
+function extractTextFromPage(doc)
+{
+    var textStr = "";
+    var dictionary = new Array();
+    var retWords = new Array();
+
+    // DEBUG
+    //var start = Date.now();
+
+    textStr += doExtract(doc);
+
+    for(var i = 0; i < doc.defaultView.frames.length; i++) {
+        var docFrame = doc.defaultView.frames[i].document;
+        textStr += doExtract(docFrame);
     }
 
     // DEBUG
-    // var end = Date.now();
-    // var elapsed = end - start; // time in milliseconds
-    // dump(elapsed/1000 + "\n\n");
+    //var end = Date.now();
+    //var elapsed = end - start; // time in milliseconds
+    //dump("EXTRACTING TEXT:" + elapsed/1000 + "secs\n\n");
 
     /*************************************************
     NOTE: @tonikitoo: I got to admit that I tried hard to find a good XPATH expression for
@@ -256,7 +266,7 @@ function extractTextFromPage(doc)
                                 doc, null,
                                 XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
-    for (var i = 0; i < textNodes.snapshotLength; i++) {
+    for(var i = 0; i < textNodes.snapshotLength; i++) {
         var node = textNodes.snapshotItem(i);
         textStr += node.data
     }
@@ -266,7 +276,7 @@ function extractTextFromPage(doc)
 
     var tmpWords = textStr.split(/[\s|\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\/|\#|/\n]+/);
 
-    for (var i = 0; i < tmpWords.length; i += 1) {
+    for(var i = 0; i < tmpWords.length; i += 1) {
 
         // Remove unwanted characters from our "text string". That is the big list:
         // ^&!@*(){},."':;?[]#%+-=<>`_~
@@ -288,7 +298,7 @@ function extractTextFromPage(doc)
     }
 
     // FIXME: And then adding to dic ... gotta optimize this.
-    for (var i in dictionary) {
+    for(var i in dictionary) {
         retWords.push(i);
     }
 
@@ -304,18 +314,18 @@ function getSimilarTerms(doc, q, t)
     var i, levDistance;
     var smallwords = 0;
 
-    for (i = 0; i < textSplitList.length; i++) {
+    for(i = 0; i < textSplitList.length; i++) {
         // TBD: move the regexp to the split phrase.
-        if (textSplitList[i].length < 3)
+        if(textSplitList[i].length < 3)
             continue;
 
         levDistance = new LevDistance(q, textSplitList[i]);
         scoreTmp = levDistance.similarity();
 
-        if (scoreTmp >= treshold) {
+        if(scoreTmp >= treshold) {
             var x = new TermScore(textSplitList[i], scoreTmp);
             termList.push(x);
-            if (scoreTmp > mostSimilarScr) {
+            if(scoreTmp > mostSimilarScr) {
                 mostSimilarStr = textSplitList[i];
                 mostSimilarScr = scoreTmp;
             }
