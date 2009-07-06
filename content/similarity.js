@@ -36,10 +36,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-
-/************************
- * Levenshtein Distance *
- ************************/
+/***************
+ * Levenshtein *
+ ***************/
 
 function LevDistance(tofind, anyterm)
 {
@@ -49,85 +48,63 @@ function LevDistance(tofind, anyterm)
     this.anyTermLen = anyterm.length;
 }
 
-LevDistance.prototype.minValue = function(a, b, c)
-{
-    var mi = parseInt(a);
-    if(parseInt(b) < mi) {
-        mi = parseInt(b);
-    }
-    if(parseInt(c) < mi) {
-        mi = parseInt(c);
-    }
-    return mi;
-}
+LevDistance.prototype = {
+    minValue : function(a, b, c)
+    {
+        var min = parseInt(a);
+        if(parseInt(b) < min)
+            min = parseInt(b);
 
-LevDistance.prototype.distance = function()
-{
-    var n; // length of toFind
-    var m; // length of anyTerm
-    var i; // iterates through toFind
-    var j; // iterates through anyTerm
-    var s_i; // ith character of toFind
-    var t_j; // jth character of anyTerm
-    var cost; // cost do edit
-    var s = this.toFind;
-    var t = this.anyTerm;
+        if(parseInt(c) < min)
+            min = parseInt(c);
 
-    // Step 1
-    var n = this.toFindLen;
-    var m = this.anyTermLen;
+        return min;
+    },
 
-    var d = new Array(n+1);
+    distance : function()
+    {
+        var s = this.toFind;
+        var t = this.anyTerm;
+        var n = this.toFindLen;
+        var m = this.anyTermLen;
 
-    if(n == 0) { return m; }
-    if(m == 0) { return n; }
+        if(n == 0) return m;
+        if(m == 0) return n;
 
-    for(i = 0; i < n+1; i++) {
-        var tmp = new Array(m+1);
-        d[i] = tmp;
-    }
-
-    for(i = 0; i <= n; i++) {
-        for(j = 0; j <= m; j++) {
-            d[i][j] = 0;
-            d[0][j] = j;
-        }
-        d[i][0] = i;
-    }
-
-   for(i = 1; i <= n; i++) {
-        var s_i = s.charAt(i - 1);
-
-        for(j = 1; j <= m; j++) {
-            var t_j = t.charAt(j - 1);
-            cost = 1
-            if(s_i == t_j) {
-                cost = 0;
+        var d;
+        for(var i = 0; i <= n; i++) {
+	    if (i == 0) d = new Array(n+1);
+            for(var j = 0; j <= m; j++) {
+	        if (j == 0) d[i] = new Array(m+1);
+                d[i][j] = 0;
+                d[0][j] = j;
             }
-
-            d[i][j] = this.minValue(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + cost);
+            d[i][0] = i;
         }
+
+       for(var i = 1; i <= n; i++) {
+            var s_i = s.charAt(i - 1);
+
+            for(var j = 1; j <= m; j++) {
+                var t_j = t.charAt(j - 1);
+                var cost = 1
+                if(s_i == t_j)
+                    cost = 0;
+
+                d[i][j] = this.minValue(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + cost);
+            }
+        }
+
+        return d[n][m];
+    },
+
+    similarity : function()
+    {
+        var most = (this.toFindLen > this.anyTerm) ? this.toFindLen : this.anyTermLen;
+        var score = parseFloat(parseInt(this.distance(this.toFind, this.anyTerm))/most);
+        return (1-score);
     }
-
-    return d[n][m];
-}
-
-LevDistance.prototype.similarity = function()
-{
-    var most;
-    var score;
-
-    if(this.toFindLen > this.anyTerm) {
-        most = this.toFindLen;
-    } else {
-        most = this.anyTermLen;
-    }
-
-    score = parseFloat(parseInt(this.distance(this.toFind, this.anyTerm))/most);
-
-    return (1-score);
-}
-
+};
 
 // create a list of terms to test the score
 function TermScore(term, score)
@@ -136,33 +113,34 @@ function TermScore(term, score)
     this.score = score;
 }
 
-TermScore.prototype.setTermScore = function(term, score)
-{
-    this.term = term;
-    this.score = score;
-}
+TermScore.prototype = 
+    setTermScore : function(term, score)
+    {
+        this.term = term;
+        this.score = score;
+    },
 
-TermScore.prototype.getScore = function()
-{
-    return this.score;
-}
+    getScore : function()
+    {
+        return this.score;
+    },
 
-TermScore.prototype.getTerm = function()
-{
-    return this.term;
-}
+    getTerm : function()
+    {
+        return this.term;
+    },
 
-TermScore.prototype.getTermScore = function()
-{
-    return this;
-}
+    getTermScore : function()
+    {
+        return this;
+    }
+};
 
 function getMostSimilarTerm(termList)
 {
-    var i;
     var mostSimilarTem = termList[0];
 
-    for(i = 1; i < termList.length; i++) {
+    for(var i = 1; i < termList.length; i++) {
         if(termList[i].getScore() > mostSimilarTem.getScore())
             mostSimilarTem = termList[i];
     }
@@ -208,7 +186,7 @@ function doExtract(doc) {
     return accumStr;
 }
 
-function extractTextFromPage(doc)
+function extractTermsFromPage(doc)
 {
     var textStr = "";
     var dictionary = new Array();
@@ -229,54 +207,9 @@ function extractTextFromPage(doc)
     //var elapsed = end - start; // time in milliseconds
     //dump("EXTRACTING TEXT:" + elapsed/1000 + "secs\n\n");
 
-    /*************************************************
-    NOTE: @tonikitoo: I got to admit that I tried hard to find a good XPATH expression for
-          what we need at this point (get text content from all nodes but not some irrelevant
-          ones from a search point of view), however none of attempts went fine enough for my
-          criteria.
-          For reference, I am leaving some below, in case we want to tried the XPATH approach
-          later on */
-
-    // var textNodes = doc.evaluate("//*[not(contains(@type , 'text/css') or contains(@type, 'text/javascript')]//text()",
-
-    // var textNodes = doc.evaluate("//*[not(contains(@type , 'text/css')) or not(contains(@type, 'text/javascript'))]//text()",
-
-    // var textNodes = doc.evaluate("//*[local-name()!='script']/text()",
-
-    // var textNodes = doc.evaluate("//*[not(local-name()='script') and not(local-name()='object') and not(local-name()='embed') and not(local-name()='meta') and not(local-name()='style')]//text()",
-
-    // var textNodes = doc.evaluate("//body/following-sibling::*[not(name()='style')] |
-                                     //body/following-sibling::*[not(name()='script')] |
-                                     //head/following-sibling::*[not(name()='style')] |
-                                     //head/following-sibling::*[not(name()='script')]//text()",
-
-    //var textNodes = doc.evaluate("/*/descendant::*[not(self::style)]//text()",
-
-    //var textNodes = doc.evaluate("//*[. != 'STYLE'] //text()",
-
-    // var textNodes = doc.evaluate("//*[(@type = 'text/css' or @type = 'text/javascript')] //text()",
-
-    // var textNodes = doc.evaluate("//*[not(node()='SCRIPT') and not(node()='STYLE')]//text()",
-
-    /* the end !!*/
-
-    // NOTE: code we used to use at 0.1 time.
-    // var textNodes = doc.evaluate("//body//text()",
-    /*textNodes = doc.evaluate("//text()",
-                                doc, null,
-                                XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-
-    for(var i = 0; i < textNodes.snapshotLength; i++) {
-        var node = textNodes.snapshotItem(i);
-        textStr += node.data
-    }
-
-    var tmpWords = textStr.split(/\s+/);
-    */
-
     var tmpWords = textStr.split(/[\s|\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\/|\#|/\n]+/);
 
-    for(var i = 0; i < tmpWords.length; i += 1) {
+    for(var i = 0; i < tmpWords.length; i++) {
 
         // Remove unwanted characters from our "text string". That is the big list:
         // ^&!@*(){},."':;?[]#%+-=<>`_~
@@ -292,7 +225,7 @@ function extractTextFromPage(doc)
         tmpWords[i] = tmpWords[i].replace(/^[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]|\#|\/]+/, "");
 
         // removing from the middle
-        // textSplitList[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+/, " ");
+        // terms[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+/, " ");
 
         dictionary[tmpWords[i].toLowerCase()] = 1;
     }
@@ -305,32 +238,35 @@ function extractTextFromPage(doc)
     return retWords;
 }
 
-function getSimilarTerms(doc, q, t)
+function getSimilarTerms(doc, query, similarityLevel)
 {
-    var scoreTmp = 0.0, mostSimilarScr = 0.0, mostSimilarStr = "";
+    var mostSimilarScore = 0.0;
+    var mostSimilarTerm = "";
+    var terms = extractTermsFromPage(doc);
+    var treshold = parseFloat(parseInt(similarityLevel)/100);
     var termList = new Array();
-    var textSplitList = extractTextFromPage(doc);
-    var treshold = parseFloat(parseInt(t)/100);
-    var i, levDistance;
-    var smallwords = 0;
 
-    for(i = 0; i < textSplitList.length; i++) {
-        // TBD: move the regexp to the split phrase.
-        if(textSplitList[i].length < 3)
+    for(var i = 0; i < terms.length; i++) {
+
+	// TBD: move the regexp to the split phrase.
+	// For terms whose length is smaller than 3, bail !
+        if(terms[i].length < 3)
             continue;
 
-        levDistance = new LevDistance(q, textSplitList[i]);
-        scoreTmp = levDistance.similarity();
+        var levDistance = new LevDistance(query, terms[i]);
+        var currentScore = levDistance.similarity();
 
-        if(scoreTmp >= treshold) {
-            var x = new TermScore(textSplitList[i], scoreTmp);
+        if(currentScore >= treshold) {
+	    // NOTE: termList is being unused !!!
+            var x = new TermScore(terms[i], currentScore);
             termList.push(x);
-            if(scoreTmp > mostSimilarScr) {
-                mostSimilarStr = textSplitList[i];
-                mostSimilarScr = scoreTmp;
+            if(currentScore > mostSimilarScore) {
+                mostSimilarTerm = terms[i];
+                mostSimilarScore = currentScore;
             }
         }
     }
 
-    return mostSimilarStr;
+    return mostSimilarTerm;
 }
+
