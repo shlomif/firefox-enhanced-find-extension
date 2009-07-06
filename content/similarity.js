@@ -113,7 +113,7 @@ function TermScore(term, score)
     this.score = score;
 }
 
-TermScore.prototype = 
+TermScore.prototype = {
     setTermScore : function(term, score)
     {
         this.term = term;
@@ -193,7 +193,7 @@ function extractTermsFromPage(doc)
     var retWords = new Array();
 
     // DEBUG
-    //var start = Date.now();
+    // var start = Date.now();
 
     textStr += doExtract(doc);
 
@@ -203,9 +203,9 @@ function extractTermsFromPage(doc)
     }
 
     // DEBUG
-    //var end = Date.now();
-    //var elapsed = end - start; // time in milliseconds
-    //dump("EXTRACTING TEXT:" + elapsed/1000 + "secs\n\n");
+    // var end = Date.now();
+    // var elapsed = end - start; // time in milliseconds
+    // dump("extracting text:" + elapsed/1000 + "secs\n\n");
 
     var tmpWords = textStr.split(/[\s|\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\/|\#|/\n]+/);
 
@@ -214,18 +214,8 @@ function extractTermsFromPage(doc)
         // Remove unwanted characters from our "text string". That is the big list:
         // ^&!@*(){},."':;?[]#%+-=<>`_~
 
-        //FIXME: Currently, we are removing the characteres in tree steps: first, from the begin,
-        // second from the end and at least from the middle. In the first two, we replace by "",
-        // and later replaces it by " ". Could all that be handled at once ?
-
-        // removing from the end
-        tmpWords[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]|\#|\/]+$/, "");
-
-        // removing from the begining
-        tmpWords[i] = tmpWords[i].replace(/^[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]|\#|\/]+/, "");
-
-        // removing from the middle
-        // terms[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|\'|:|;|\?|\[|\]]+/, " ");
+        // |trim| the string according to the list above.
+        tmpWords[i] = tmpWords[i].replace(/[\&|!|@|\*|\(|\)|\{|\}|\,|\.|\"|'|:|;|\?|\[|\]|\#|\/]+\b/, "");
 
         dictionary[tmpWords[i].toLowerCase()] = 1;
     }
