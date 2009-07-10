@@ -136,6 +136,7 @@ TermScore.prototype = {
     }
 };
 
+
 function getMostSimilarTerm(termList)
 {
     var mostSimilarTem = termList[0];
@@ -228,6 +229,10 @@ function extractTermsFromPage(doc)
     return retWords;
 }
 
+function sortByScore(a, b){
+    return (a.score < b.score);
+}
+
 function getSimilarTerms(doc, query, similarityLevel)
 {
     var mostSimilarScore = 0.0;
@@ -260,3 +265,39 @@ function getSimilarTerms(doc, query, similarityLevel)
     return mostSimilarTerm;
 }
 
+function getListOfSimilarTerms(doc, query, similarityLevel)
+{
+    var mostSimilarScore = 0.0;
+    var mostSimilarTerm = "";
+    var terms = extractTermsFromPage(doc);
+    var treshold = parseFloat(parseInt(similarityLevel)/100);
+    var termList = new Array();
+
+    for(var i = 0; i < terms.length; i++) {
+
+	// TBD: move the regexp to the split phrase.
+	// For terms whose length is smaller than 3, bail !
+        if(terms[i].length < 3)
+            continue;
+
+        var levDistance = new LevDistance(query, terms[i]);
+        var currentScore = levDistance.similarity();
+
+        if(currentScore >= treshold) {
+	    // NOTE: termList is being unused !!!
+            var x = new TermScore(terms[i], currentScore);
+            termList.push(x);
+        }
+		
+		// sort in desc order by score
+		termList.sort(sortByScore);
+    }
+	
+	var onlyTerms = new Array();
+	
+	for (i = 0; i < termList.length; i++) {
+		onlyTerms.push(termList[i].term);
+    }
+
+    return onlyTerms;
+}
