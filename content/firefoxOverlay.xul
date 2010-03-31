@@ -42,6 +42,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script src="overlay.js"/>
+    <script src="similarity.js"/>
 
     <stringbundleset id="stringbundleset">
         <stringbundle id="smartfind-strings" src="chrome://smartfind/locale/smartfind.properties"/>
@@ -61,8 +62,4 @@
         </menu>
     </menupopup>
 </overlay>
-
-
-
-
 

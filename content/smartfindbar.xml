@@ -274,10 +274,6 @@
             <method name="onFindAgainCommand">
                 <parameter name="aFindPrevious"/>
                 <body><![CDATA[
-                    Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                        .getService(Ci.mozIJSSubScriptLoader)
-                        .loadSubScript("chrome://smartfind/content/similarity.js");
-
                     var findString = this._browser.fastFind.searchString || this._findField.value;
                     if (!findString) {
                         this.startFind();
