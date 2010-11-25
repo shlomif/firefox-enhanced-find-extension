@@ -51,14 +51,10 @@ function LevDistance(tofind, anyterm)
 LevDistance.prototype = {
     minValue : function(a, b, c)
     {
-        var min = parseInt(a);
-        if(parseInt(b) < min)
-            min = parseInt(b);
-
-        if(parseInt(c) < min)
-            min = parseInt(c);
-
-        return min;
+        a = parseInt(a);
+        b = parseInt(b);
+        c = parseInt(c);
+        return a < b ? (a < c ? a : c) : (b < c ? b : c);
     },
 
     distance : function()
@@ -72,9 +68,9 @@ LevDistance.prototype = {
         if(m == 0) return n;
 
         var d;
-        for(var i = 0; i <= n; i++) {
+        for(var i = 0; i <= n; ++i) {
 	    if (i == 0) d = new Array(n+1);
-            for(var j = 0; j <= m; j++) {
+            for(var j = 0; j <= m; ++j) {
 	        if (j == 0) d[i] = new Array(m+1);
                 d[i][j] = 0;
                 d[0][j] = j;
@@ -82,10 +78,10 @@ LevDistance.prototype = {
             d[i][0] = i;
         }
 
-       for(var i = 1; i <= n; i++) {
+       for(var i = 1; i <= n; ++i) {
             var s_i = s.charAt(i - 1);
 
-            for(var j = 1; j <= m; j++) {
+            for(var j = 1; j <= m; ++j) {
                 var t_j = t.charAt(j - 1);
                 var cost = 1
                 if(s_i == t_j)
@@ -139,14 +135,14 @@ TermScore.prototype = {
 
 function getMostSimilarTerm(termList)
 {
-    var mostSimilarTem = termList[0];
+    var mostSimilarTerm = termList[0];
 
-    for(var i = 1; i < termList.length; i++) {
-        if(termList[i].getScore() > mostSimilarTem.getScore())
-            mostSimilarTem = termList[i];
+    for(var i = 1; i < termList.length; ++i) {
+        if(termList[i].getScore() > mostSimilarTerm.getScore())
+            mostSimilarTerm = termList[i];
     }
 
-    return mostSimilarTem.getTerm();
+    return mostSimilarTerm.getTerm();
 }
 
 function doExtract(doc) {
