@@ -6,16 +6,9 @@ findbar {
 
 .findbar-textbox {
     -moz-binding: url("chrome://smartfind/content/smartfindbar.xml#smartfindbar-textbox") !important;
-    -moz-appearance: none;
-    border: none;
-    margin: 0;
 }
 
 .findbar-textbox[status="foundsimilar"] {
-  background-color: #2cb7b9;
+  -moz-box-shadow: 0pt 0pt 0pt 1em #2cb7b9 inset;
   color: #FFFFFF;
-  -moz-border-top-colors: #5F5F5F #2CB7B9 #2CB7B9;
-  -moz-border-bottom-colors: #9F9F9F #2CB7B9 #2CB7B9;
-  -moz-border-right-colors: #7F7F7F #2CB7B9 #2CB7B9;
-  -moz-border-left-colors: #7F7F7F #2CB7B9 #2CB7B9;
 }
