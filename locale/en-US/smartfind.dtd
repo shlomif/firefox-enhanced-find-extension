@@ -2,6 +2,8 @@
 <!ENTITY smartfindSimilarCheckbox.accesskey "s">
 <!ENTITY smartfindSimilarMenu.label "Find Similarity Level">
 <!ENTITY smartfindSimilarMenu.key "L">
+<!ENTITY smartfindRegexCheckbox.label "Regular Expression">
+<!ENTITY smartfindRegexCheckbox.accesskey "r">
 <!ENTITY smartfindMenuItemLow.label "Low">
 <!ENTITY smartfindMenuItemLow.key "L">
 <!ENTITY smartfindMenuItemMedium.label "Medium">

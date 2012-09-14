@@ -59,6 +59,7 @@ var smartFindOverlay =
         this.strings = document.getElementById("smartfind-strings");
 
         this.findSimilar = gFindBar.getElement("find-similar");
+        this.findRegex = gFindBar.getElement("find-regex");
         this.findMatchCase = gFindBar.getElement("find-case-sensitive");
         this.findMenuItem = document.getElementById("smartfind-menu");
 
@@ -67,7 +68,13 @@ var smartFindOverlay =
                 .getBranch("extensions.smartfind.")
                 .QueryInterface(Components.interfaces.nsIPrefBranch2);
 
+        this.mRegexPrefs = Components.classes["@mozilla.org/preferences-service;1"]
+                .getService(Components.interfaces.nsIPrefService)
+                .getBranch("extensions.smartfind.regex.")
+                .QueryInterface(Components.interfaces.nsIPrefBranch2);
+
         this.mPrefs.addObserver("", this, false);
+        this.mRegexPrefs.addObserver("", this, false);
     },
 
     openFindBar: function() {
@@ -75,6 +82,9 @@ var smartFindOverlay =
 
         this.findMatchCase.disabled = enabled;
         this.findSimilar.checked = enabled;
+
+        var regex_enabled = this.mRegexPrefs.getBoolPref("enabled");
+        this.findRegex.checked = regex_enabled;
 
         gFindBar.onFindCommand();
     },
