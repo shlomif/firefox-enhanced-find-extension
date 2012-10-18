@@ -239,7 +239,11 @@
                         .getService(Components.interfaces.nsIPrefBranch2);
 
                     prefsvc.setBoolPref("extensions.smartfind.enabled", aSimilar ? true : false);
-                    this._similar = aSimilar;
+                    // We cannot do both a regular expression search and
+                    // a similar search.
+                    if (this._similar = aSimilar) {
+                        this.getElement("find-regex").checked = false;
+                    }
                 ]]></body>
             </method>
 
@@ -250,7 +254,11 @@
                         .getService(Components.interfaces.nsIPrefBranch2);
 
                     prefsvc.setBoolPref("extensions.smartfind.regex.enabled", aRegex ? true : false);
-                    this._regex = aRegex;
+                    // We cannot do both a regular expression search and
+                    // a similar search.
+                    if (this._regex = aRegex) {
+                        this.getElement("find-similar").checked = false;
+                    }
                 ]]></body>
             </method>
 
