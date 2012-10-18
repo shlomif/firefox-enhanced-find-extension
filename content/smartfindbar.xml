@@ -242,7 +242,9 @@
                     // We cannot do both a regular expression search and
                     // a similar search.
                     if (this._similar = aSimilar) {
-                        this.getElement("find-regex").checked = false;
+                        this._setRegex(
+                            this.getElement("find-regex").checked = false
+                        );
                     }
                 ]]></body>
             </method>
@@ -257,7 +259,9 @@
                     // We cannot do both a regular expression search and
                     // a similar search.
                     if (this._regex = aRegex) {
-                        this.getElement("find-similar").checked = false;
+                        this._setSimilar(
+                            this.getElement("find-similar").checked = false
+                        );
                     }
                 ]]></body>
             </method>
