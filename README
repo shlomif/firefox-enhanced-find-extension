@@ -1,0 +1,3 @@
+An enhanced find bar for the Mozilla Firefox browser. Was an attempt to
+add regular expression search, but it stopped working, after recent versions
+of Firefox broke the search bar UI.
