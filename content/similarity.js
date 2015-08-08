@@ -284,13 +284,13 @@ function getListOfSimilarTerms(doc, query, similarityLevel)
             var x = new TermScore(terms[i], currentScore);
             termList.push(x);
         }
-		
+
 		// sort in desc order by score
 		termList.sort(sortByScore);
     }
-	
+
 	var onlyTerms = new Array();
-	
+
 	for (i = 0; i < termList.length; i++) {
 		onlyTerms.push(termList[i].term);
     }
